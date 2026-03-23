@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check List de Veículos — AGA Resíduos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde:     #1B6B2F;
+    --verde-mid: #2E8B57;
+    --verde-clr: #d4edda;
+    --verde-xclr:#f0f9f2;
+    --cinza-bg:  #f5f6f7;
+    --cinza-brd: #e0e3e7;
+    --cinza-txt: #6b7280;
+    --preto:     #0f1923;
+    --branco:    #ffffff;
+    --laranja:   #e65c00;
+    --laranja-clr:#fff4ee;
+    --azul:      #1a56db;
+    --azul-clr:  #eff6ff;
+    --vermelho:  #c0392b;
+    --verm-clr:  #fdf2f2;
+    --amarelo:   #d97706;
+    --amar-clr:  #fffbeb;
+    --r: 8px;
+    --r-lg: 14px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cinza-bg);
+    color: var(--preto);
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--verde);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(27,107,47,0.3);
+  }
+  .topbar-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    color: #fff;
+    letter-spacing: -.3px;
+  }
+  .topbar-brand span { opacity: .6; font-weight: 400; }
+  .tab-switcher {
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 30px;
+    padding: 4px;
+  }
+  .tab-btn {
+    padding: 6px 18px;
+    border-radius: 24px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.75);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .tab-btn.active {
+    background: #fff;
+    color: var(--verde);
+    font-weight: 600;
+  }
+
+  /* ── CONFIG BANNER ── */
+  #config-banner {
+    background: #fff3cd;
+    border-bottom: 2px solid #ffc107;
+    padding: 12px 24px;
+    font-size: 13px;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  #config-banner code {
+    background: rgba(0,0,0,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── FORM VIEW ── */
+  .form-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  .form-header {
+    background: var(--branco);
+    border-radius: var(--r-lg);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--verde);
+  }
+  .form-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--verde);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media(max-width:540px) {
+    .form-row, .form-row.three { grid-template-columns: 1fr; }
+  }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--cinza-txt);
+    margin-bottom: 6px;
+  }
+  .field select, .field input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--cinza-brd);
+    border-radius: var(--r);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--preto);
+    background: var(--branco);
+    transition: border-color .2s;
+    outline: none;
+  }
+  .field select:focus, .field input:focus {
+    border-color: var(--verde);
+  }
+
+  /* ── CATEGORIA ── */
+  .categoria-block {
+    background: var(--branco);
+    border-radius: var(--r-lg);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .categoria-header {
+    background: var(--preto);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .categoria-header .icon {
+    width: 28px; height: 28px;
+    background: var(--verde);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .categoria-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+
+  .item-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 130px;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--cinza-brd);
+    gap: 12px;
+    transition: background .15s;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-row:hover { background: var(--verde-xclr); }
+  .item-row.has-falha { background: var(--verm-clr); }
+  .item-row.has-falha:hover { background: #fce8e6; }
+
+  .item-num {
+    width: 28px; height: 28px;
+    background: var(--cinza-brd);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--cinza-txt);
+    flex-shrink: 0;
+  }
+  .item-desc {
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: var(--preto);
+  }
+
+  /* Toggle OK / FALHA */
+  .toggle-group {
+    display: flex;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1.5px solid var(--cinza-brd);
+    flex-shrink: 0;
+  }
+  .toggle-group input[type=radio] { display: none; }
+  .toggle-group label {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s;
+    color: var(--cinza-txt);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+  .toggle-group input[value="OK"]:checked + label {
+    background: var(--verde);
+    color: #fff;
+  }
+  .toggle-group input[value="FALHA"]:checked + label {
+    background: var(--vermelho);
+    color: #fff;
+  }
+
+  /* Campo observação (aparece quando FALHA) */
+  .obs-row {
+    display: none;
+    grid-column: 2 / 4;
+    padding: 0 16px 12px;
+  }
+  .obs-row.visible { display: block; }
+  .obs-row input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid var(--vermelho);
+    border-radius: var(--r);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    background: var(--verm-clr);
+  }
+  .obs-row input:focus { border-color: var(--preto); }
+  .obs-row input::placeholder { color: #aaa; }
+
+  /* ── SUBMIT BTN ── */
+  .submit-area {
+    position: sticky;
+    bottom: 0;
+    background: var(--cinza-bg);
+    padding: 16px 0 24px;
+    display: flex;
+    justify-content: center;
+  }
+  .btn-submit {
+    background: var(--verde);
+    color: #fff;
+    border: none;
+    padding: 14px 48px;
+    border-radius: 30px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(27,107,47,0.35);
+    transition: all .2s;
+    letter-spacing: .3px;
+  }
+  .btn-submit:hover { background: #155224; transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit:disabled { background: #aaa; box-shadow: none; cursor: not-allowed; transform: none; }
+
+  /* ── SUCCESS STATE ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+  }
+  .success-screen .check-icon {
+    width: 72px; height: 72px;
+    background: var(--verde-clr);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+  }
+  .success-screen h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    color: var(--verde);
+    margin-bottom: 8px;
+  }
+  .success-screen p { color: var(--cinza-txt); font-size: 15px; margin-bottom: 28px; }
+  .btn-novo {
+    background: var(--verde);
+    color: #fff;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* ── PAINEL ADMIN ── */
+  .admin-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  .admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .admin-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  /* Resumo por placa */
+  .placas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .placa-card {
+    background: var(--branco);
+    border-radius: var(--r-lg);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--cinza-brd);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .placa-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .placa-card.active { border-top-color: var(--verde); }
+  .placa-card .placa-tag {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 2px;
+  }
+  .placa-card .placa-desc {
+    font-size: 12px;
+    color: var(--cinza-txt);
+    margin-bottom: 14px;
+  }
+  .placa-stats {
+    display: flex;
+    gap: 8px;
+  }
+  .stat-pill {
+    flex: 1;
+    text-align: center;
+    border-radius: 6px;
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .stat-pill .num { display: block; font-size: 18px; line-height: 1.2; }
+  .stat-pill.pend  { background: var(--verm-clr);  color: var(--vermelho); }
+  .stat-pill.anda  { background: var(--amar-clr);  color: var(--amarelo); }
+  .stat-pill.ok    { background: var(--verde-clr); color: var(--verde); }
+
+  /* Filtros */
+  .filtros {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filtro-select {
+    padding: 8px 14px;
+    border: 1.5px solid var(--cinza-brd);
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--branco);
+    color: var(--preto);
+    outline: none;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .filtro-select:focus { border-color: var(--verde); }
+
+  .btn-refresh {
+    margin-left: auto;
+    padding: 8px 18px;
+    background: var(--verde-xclr);
+    border: 1.5px solid var(--verde-clr);
+    border-radius: 20px;
+    color: var(--verde);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all .2s;
+  }
+  .btn-refresh:hover { background: var(--verde); color: #fff; }
+
+  /* Tabela */
+  .table-wrap {
+    background: var(--branco);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead tr {
+    background: var(--preto);
+  }
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    color: rgba(255,255,255,0.8);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--cinza-brd);
+    transition: background .15s;
+  }
+  tbody tr:hover { background: var(--verde-xclr); }
+  tbody tr:last-child { border-bottom: none; }
+  td {
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+  td.item-desc-td { max-width: 280px; line-height: 1.4; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .badge.pend { background: var(--verm-clr); color: var(--vermelho); }
+  .badge.anda { background: var(--amar-clr); color: var(--amarelo); }
+  .badge.resol { background: var(--verde-clr); color: var(--verde); }
+
+  .badge-placa {
+    background: var(--preto);
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    letter-spacing: .5px;
+  }
+
+  /* Botões de status */
+  .status-btn {
+    padding: 5px 11px;
+    border-radius: 16px;
+    border: 1.5px solid currentColor;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    transition: all .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .status-btn.to-anda  { color: var(--amarelo); }
+  .status-btn.to-resol { color: var(--verde); }
+  .status-btn.to-pend  { color: var(--cinza-txt); }
+  .status-btn:hover { opacity: .75; }
+  .status-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  .actions-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--cinza-txt);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* Loading */
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--cinza-txt);
+    font-size: 14px;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--preto);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    transition: transform .3s ease;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.ok   { background: var(--verde); }
+  #toast.err  { background: var(--vermelho); }
+</style>
+</head>
+<body>
+
+<!-- CONFIG — substitua pelos seus dados do Supabase -->
+<script>
+  const SUPABASE_URL = 'https://wrjxntsljzanxxvkmzps.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyanhudHNsanphbnh4dmttenBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODk3NjYsImV4cCI6MjA4OTg2NTc2Nn0.xtgRoDU4nQMTSE2hMhFG2bGmMtAG8JabvF3KnP2Hleo';
+
+  const FROTA = [
+    { placa: 'ITZ5A45', descricao: 'Caminhão Tanque' },
+    { placa: 'JPX8D88', descricao: 'Caminhão Sider' },
+    { placa: 'KZI6194', descricao: 'Compactador' },
+  ];
+
+  const CHECKLIST = [
+    { cat: 'Documentação', icon: '📋', itens: [
+      { n:1,  desc: 'Documentos do veículo e licenças estão no veículo?' },
+      { n:2,  desc: 'Quilometragem conferida e anotada?' },
+    ]},
+    { cat: 'Sistema Elétrico', icon: '💡', itens: [
+      { n:3,  desc: 'Buzina funcionando?' },
+      { n:4,  desc: 'Para-brisa e limpador em perfeito estado?' },
+      { n:5,  desc: 'Esguicho de água do limpador funcionando?' },
+      { n:6,  desc: 'Luz interna funcionando?' },
+      { n:7,  desc: 'Luz do painel funcionando?' },
+      { n:8,  desc: 'Farol alto funcionando?' },
+      { n:9,  desc: 'Farol baixo funcionando?' },
+      { n:10, desc: 'Luz marcha ré funcionando?' },
+      { n:11, desc: 'Pisca alerta / pisca-pisca funcionando?' },
+      { n:12, desc: 'Lanternas e setas funcionando?' },
+      { n:13, desc: 'Luz de freio funcionando?' },
+      { n:14, desc: 'Luz de placa funcionando?' },
+    ]},
+    { cat: 'Instrumentos e Equipamentos', icon: '🔧', itens: [
+      { n:15, desc: 'Tacógrafo funcionando?' },
+      { n:16, desc: 'Termômetro funcionando?' },
+      { n:17, desc: 'Mangotes e equipamentos de sucção aptos?' },
+      { n:18, desc: 'Ferramentas operacionais disponíveis? (pás, enxada, vassouras)' },
+      { n:19, desc: 'Água da bomba e radiador em nível adequado?' },
+    ]},
+    { cat: 'Segurança', icon: '🛡️', itens: [
+      { n:20, desc: 'Profundidade dos sulcos do pneu em bom estado?' },
+      { n:21, desc: 'Possui cinto de segurança?' },
+      { n:22, desc: 'Identificação de proibição de celular no painel?' },
+      { n:23, desc: 'Freio de serviço funcionando?' },
+      { n:24, desc: 'Freio de estacionamento funcionando?' },
+      { n:25, desc: 'Limpeza do veículo e assentos em boas condições?' },
+      { n:26, desc: 'Espelhos retrovisores internos e externos em bom estado?' },
+      { n:27, desc: 'Proteção de todas as partes móveis?' },
+      { n:28, desc: 'Fitas refletivas nos lados externos?' },
+      { n:29, desc: 'Controle de emissão de gases (Ringelmann)?' },
+      { n:30, desc: 'Logotipo da empresa e numeração?' },
+      { n:31, desc: 'Calço disponível no veículo?' },
+      { n:32, desc: 'Alerta sonoro de marcha ré?' },
+      { n:33, desc: 'Kit de EPIs disponível? (Luvas, Uniforme, Respirador)' },
+      { n:34, desc: 'Escada de acesso e corrimão em bom estado?' },
+    ]},
+    { cat: 'Equipamentos de Emergência', icon: '🧯', itens: [
+      { n:35, desc: 'Extintor de incêndio na validade?' },
+    ]},
+    { cat: 'Estrutura', icon: '🚛', itens: [
+      { n:36, desc: 'Portas com maçanetas e trincos em bom estado?' },
+      { n:37, desc: 'Estado geral da lataria e tanque?' },
+      { n:38, desc: 'Sistema de climatização?' },
+      { n:39, desc: 'Estado geral da carroceria?' },
+    ]},
+  ];
+</script>
+
+<!-- CONFIG BANNER -->
+<div id="config-banner">
+  ⚠️ <strong>Configuração necessária:</strong> abra o arquivo HTML e substitua <code>https://wrjxntsljzanxxvkmzps.supabase.co</code> e <code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyanhudHNsanphbnh4dmttenBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODk3NjYsImV4cCI6MjA4OTg2NTc2Nn0.xtgRoDU4nQMTSE2hMhFG2bGmMtAG8JabvF3KnP2Hleo</code> pelos dados do seu projeto Supabase.
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">AGA <span>/ Check List</span></div>
+  <div class="tab-switcher">
+    <button class="tab-btn active" onclick="switchTab('form')">📋 Vistoria</button>
+    <button class="tab-btn" onclick="switchTab('admin')">📊 Painel Admin</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- VIEW: FORMULÁRIO DO MOTORISTA             -->
+<!-- ══════════════════════════════════════════ -->
+<div id="view-form" class="view active">
+  <div class="form-container">
+
+    <div id="success-screen" class="success-screen">
+      <div class="check-icon">✅</div>
+      <h2>Vistoria enviada!</h2>
+      <p>Os dados foram salvos com sucesso.<br>Falhas registradas automaticamente no painel.</p>
+      <button class="btn-novo" onclick="resetForm()">Nova Vistoria</button>
+    </div>
+
+    <div id="form-body">
+      <div class="form-header">
+        <h2>Vistoria do Veículo</h2>
+        <div class="form-row three">
+          <div class="field">
+            <label>Placa</label>
+            <select id="f-placa">
+              <option value="">Selecione...</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Motorista</label>
+            <input id="f-motorista" type="text" placeholder="Nome completo">
+          </div>
+          <div class="field">
+            <label>KM Atual</label>
+            <input id="f-km" type="number" placeholder="Ex: 85420">
+          </div>
+        </div>
+        <div class="form-row" style="grid-template-columns:1fr; margin-bottom:0">
+          <div class="field">
+            <label>Data da Vistoria</label>
+            <input id="f-data" type="date">
+          </div>
+        </div>
+      </div>
+
+      <div id="checklist-body"></div>
+
+      <div class="submit-area">
+        <button class="btn-submit" id="btn-enviar" onclick="enviarChecklist()">
+          Enviar Vistoria
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- VIEW: PAINEL ADMINISTRADOR                -->
+<!-- ══════════════════════════════════════════ -->
+<div id="view-admin" class="view">
+  <div class="admin-container">
+
+    <div class="admin-header">
+      <h2>Painel de Manutenção</h2>
+      <button class="btn-refresh" onclick="carregarAdmin()">↻ Atualizar</button>
+    </div>
+
+    <!-- Cards por placa -->
+    <div class="placas-grid" id="placas-grid"></div>
+
+    <!-- Filtros -->
+    <div class="filtros">
+      <select class="filtro-select" id="filtro-placa" onchange="aplicarFiltros()">
+        <option value="">Todas as placas</option>
+      </select>
+      <select class="filtro-select" id="filtro-status" onchange="aplicarFiltros()">
+        <option value="">Todos os status</option>
+        <option value="PENDENTE">🔴 Pendente</option>
+        <option value="EM_ANDAMENTO">🟡 Em andamento</option>
+        <option value="RESOLVIDO">🟢 Resolvido</option>
+      </select>
+      <select class="filtro-select" id="filtro-cat" onchange="aplicarFiltros()">
+        <option value="">Todas as categorias</option>
+      </select>
+    </div>
+
+    <!-- Tabela -->
+    <div class="table-wrap">
+      <div id="admin-loading" class="loading">Carregando dados...</div>
+      <table id="admin-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Placa</th>
+            <th>Motorista</th>
+            <th>Cat.</th>
+            <th>#</th>
+            <th>Item</th>
+            <th>Observação</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+      <div id="admin-empty" class="empty-state" style="display:none">
+        <div class="icon">🎉</div>
+        <p>Nenhuma falha encontrada com os filtros selecionados.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────
+const configured = () =>
+  SUPABASE_URL !== 'COLE_SUA_URL_AQUI' && SUPABASE_KEY !== 'COLE_SUA_ANON_KEY_AQUI';
+
+function showToast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  setTimeout(() => { t.className = ''; }, 3200);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) =>
+    b.classList.toggle('active', (i===0 && tab==='form') || (i===1 && tab==='admin'))
+  );
+  document.getElementById('view-form').classList.toggle('active', tab === 'form');
+  document.getElementById('view-admin').classList.toggle('active', tab === 'admin');
+  if (tab === 'admin') carregarAdmin();
+}
+
+// ─────────────────────────────────────────
+// SUPABASE HELPERS
+// ─────────────────────────────────────────
+async function sbFetch(path, opts = {}) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || 'return=representation',
+      ...opts.headers
+    },
+    method: opts.method || 'GET',
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+// ─────────────────────────────────────────
+// INICIALIZAÇÃO DO FORMULÁRIO
+// ─────────────────────────────────────────
+function initForm() {
+  // Populate placa dropdown
+  const sel = document.getElementById('f-placa');
+  FROTA.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v.placa;
+    o.textContent = `${v.placa} — ${v.descricao}`;
+    sel.appendChild(o);
+  });
+
+  // Default date = today
+  document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
+
+  // Build checklist UI
+  const body = document.getElementById('checklist-body');
+  body.innerHTML = '';
+
+  CHECKLIST.forEach(cat => {
+    const block = document.createElement('div');
+    block.className = 'categoria-block';
+
+    const header = document.createElement('div');
+    header.className = 'categoria-header';
+    header.innerHTML = `<div class="icon">${cat.icon}</div><h3>${cat.cat}</h3>`;
+    block.appendChild(header);
+
+    cat.itens.forEach(item => {
+      const uid = `item_${item.n}`;
+
+      // item row
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.id = `row_${item.n}`;
+      row.innerHTML = `
+        <div class="item-num">${item.n}</div>
+        <div class="item-desc">${item.desc}</div>
+        <div class="toggle-group">
+          <input type="radio" name="${uid}" id="${uid}_ok" value="OK" checked>
+          <label for="${uid}_ok">OK</label>
+          <input type="radio" name="${uid}" id="${uid}_falha" value="FALHA">
+          <label for="${uid}_falha">Falha</label>
+        </div>
+      `;
+
+      // obs row (hidden until FALHA)
+      const obsRow = document.createElement('div');
+      obsRow.className = 'obs-row';
+      obsRow.id = `obs_${item.n}`;
+      obsRow.innerHTML = `<input type="text" placeholder="Descreva a falha brevemente..." id="obs_txt_${item.n}">`;
+
+      // listen for toggle
+      row.querySelectorAll(`input[name="${uid}"]`).forEach(radio => {
+        radio.addEventListener('change', () => {
+          const isFalha = radio.value === 'FALHA';
+          row.classList.toggle('has-falha', isFalha);
+          obsRow.classList.toggle('visible', isFalha);
+        });
+      });
+
+      block.appendChild(row);
+      block.appendChild(obsRow);
+    });
+
+    body.appendChild(block);
+  });
+}
+
+// ─────────────────────────────────────────
+// ENVIAR CHECKLIST
+// ─────────────────────────────────────────
+async function enviarChecklist() {
+  if (!configured()) {
+    showToast('Configure o Supabase primeiro.', 'err'); return;
+  }
+  const placa     = document.getElementById('f-placa').value.trim();
+  const motorista = document.getElementById('f-motorista').value.trim();
+  const km        = parseInt(document.getElementById('f-km').value) || null;
+  const data      = document.getElementById('f-data').value;
+
+  if (!placa || !motorista || !data) {
+    showToast('Preencha placa, motorista e data.', 'err'); return;
+  }
+
+  // Coletar falhas
+  const falhas = [];
+  CHECKLIST.forEach(cat => {
+    cat.itens.forEach(item => {
+      const sel = document.querySelector(`input[name="item_${item.n}"]:checked`);
+      if (sel && sel.value === 'FALHA') {
+        const obs = document.getElementById(`obs_txt_${item.n}`)?.value.trim() || '';
+        falhas.push({
+          item_numero: item.n,
+          categoria:   cat.cat,
+          descricao:   item.desc,
+          observacao:  obs,
+          status_manut:'PENDENTE'
+        });
+      }
+    });
+  });
+
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  try {
+    // 1. Inserir vistoria
+    const [vistoria] = await sbFetch('vistorias', {
+      method: 'POST',
+      body: { placa, motorista, data_vistoria: data, km, total_falhas: falhas.length }
+    });
+
+    // 2. Inserir itens com falha
+    if (falhas.length > 0) {
+      const payload = falhas.map(f => ({ ...f, vistoria_id: vistoria.id }));
+      await sbFetch('itens_vistoria', { method: 'POST', body: payload });
+    }
+
+    document.getElementById('form-body').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+
+  } catch(e) {
+    showToast('Erro ao enviar. Verifique a conexão.', 'err');
+    console.error(e);
+    btn.disabled = false;
+    btn.textContent = 'Enviar Vistoria';
+  }
+}
+
+function resetForm() {
+  document.getElementById('form-body').style.display = 'block';
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('f-motorista').value = '';
+  document.getElementById('f-km').value = '';
+  document.getElementById('f-placa').value = '';
+  document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
+  initForm(); // rebuild checklist
+}
+
+// ─────────────────────────────────────────
+// PAINEL ADMIN
+// ─────────────────────────────────────────
+let allFalhas = [];
+
+async function carregarAdmin() {
+  if (!configured()) {
+    document.getElementById('admin-loading').textContent =
+      '⚠️ Configure o Supabase no início do arquivo HTML.';
+    return;
+  }
+
+  document.getElementById('admin-loading').style.display = 'block';
+  document.getElementById('admin-table').style.display = 'none';
+  document.getElementById('admin-empty').style.display = 'none';
+
+  try {
+    // Buscar itens com falha + join vistoria
+    const data = await sbFetch(
+      'itens_vistoria?select=*,vistorias(placa,motorista,data_vistoria,km)&order=criado_em.desc',
+      { prefer: 'return=representation' }
+    );
+
+    allFalhas = data.map(r => ({
+      id:         r.id,
+      data:       r.vistorias?.data_vistoria || '',
+      placa:      r.vistorias?.placa || '',
+      motorista:  r.vistorias?.motorista || '',
+      km:         r.vistorias?.km || '',
+      categoria:  r.categoria,
+      num:        r.item_numero,
+      descricao:  r.descricao,
+      observacao: r.observacao || '',
+      status:     r.status_manut,
+    }));
+
+    renderPlacasCards();
+    populateFiltros();
+    aplicarFiltros();
+
+  } catch(e) {
+    document.getElementById('admin-loading').textContent = 'Erro ao carregar dados.';
+    console.error(e);
+  }
+}
+
+function renderPlacasCards() {
+  const grid = document.getElementById('placas-grid');
+  grid.innerHTML = '';
+
+  FROTA.forEach(v => {
+    const falhasVeiculo = allFalhas.filter(f => f.placa === v.placa);
+    const pend = falhasVeiculo.filter(f => f.status === 'PENDENTE').length;
+    const anda = falhasVeiculo.filter(f => f.status === 'EM_ANDAMENTO').length;
+    const ok   = falhasVeiculo.filter(f => f.status === 'RESOLVIDO').length;
+
+    grid.innerHTML += `
+      <div class="placa-card" onclick="filtrarPorPlaca('${v.placa}')">
+        <div class="placa-tag">${v.placa}</div>
+        <div class="placa-desc">${v.descricao}</div>
+        <div class="placa-stats">
+          <div class="stat-pill pend"><span class="num">${pend}</span>Pendente</div>
+          <div class="stat-pill anda"><span class="num">${anda}</span>Andamento</div>
+          <div class="stat-pill ok"><span class="num">${ok}</span>Resolvido</div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function filtrarPorPlaca(placa) {
+  document.getElementById('filtro-placa').value = placa;
+  aplicarFiltros();
+}
+
+function populateFiltros() {
+  // Placa
+  const fp = document.getElementById('filtro-placa');
+  fp.innerHTML = '<option value="">Todas as placas</option>';
+  FROTA.forEach(v => {
+    fp.innerHTML += `<option value="${v.placa}">${v.placa}</option>`;
+  });
+
+  // Categoria
+  const fc = document.getElementById('filtro-cat');
+  fc.innerHTML = '<option value="">Todas as categorias</option>';
+  const cats = [...new Set(allFalhas.map(f => f.categoria))];
+  cats.forEach(c => { fc.innerHTML += `<option value="${c}">${c}</option>`; });
+}
+
+function aplicarFiltros() {
+  const fp = document.getElementById('filtro-placa').value;
+  const fs = document.getElementById('filtro-status').value;
+  const fc = document.getElementById('filtro-cat').value;
+
+  let filtered = allFalhas;
+  if (fp) filtered = filtered.filter(f => f.placa === fp);
+  if (fs) filtered = filtered.filter(f => f.status === fs);
+  if (fc) filtered = filtered.filter(f => f.categoria === fc);
+
+  renderTabela(filtered);
+}
+
+function renderTabela(rows) {
+  document.getElementById('admin-loading').style.display = 'none';
+
+  if (rows.length === 0) {
+    document.getElementById('admin-table').style.display = 'none';
+    document.getElementById('admin-empty').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('admin-empty').style.display = 'none';
+  document.getElementById('admin-table').style.display = 'table';
+
+  const tbody = document.getElementById('admin-tbody');
+  tbody.innerHTML = rows.map(r => {
+    const badgeClass = r.status === 'PENDENTE' ? 'pend' : r.status === 'EM_ANDAMENTO' ? 'anda' : 'resol';
+    const badgeLabel = r.status === 'PENDENTE' ? '🔴 Pendente'
+                     : r.status === 'EM_ANDAMENTO' ? '🟡 Andamento' : '🟢 Resolvido';
+
+    const dataFmt = r.data ? r.data.split('-').reverse().join('/') : '—';
+    const kmFmt   = r.km ? r.km.toLocaleString('pt-BR') + ' km' : '—';
+
+    // Botões de ação baseados no status atual
+    let acoes = '';
+    if (r.status === 'PENDENTE') {
+      acoes = `
+        <button class="status-btn to-anda"  onclick="mudarStatus(${r.id},'EM_ANDAMENTO')">→ Andamento</button>
+        <button class="status-btn to-resol" onclick="mudarStatus(${r.id},'RESOLVIDO')">✓ Resolvido</button>
+      `;
+    } else if (r.status === 'EM_ANDAMENTO') {
+      acoes = `
+        <button class="status-btn to-resol" onclick="mudarStatus(${r.id},'RESOLVIDO')">✓ Resolvido</button>
+        <button class="status-btn to-pend"  onclick="mudarStatus(${r.id},'PENDENTE')">↩ Pendente</button>
+      `;
+    } else {
+      acoes = `<button class="status-btn to-pend" onclick="mudarStatus(${r.id},'PENDENTE')">↩ Reabrir</button>`;
+    }
+
+    return `
+      <tr id="tr_${r.id}">
+        <td>${dataFmt}<br><small style="color:var(--cinza-txt)">${kmFmt}</small></td>
+        <td><span class="badge-placa">${r.placa}</span></td>
+        <td style="white-space:nowrap">${r.motorista}</td>
+        <td><small style="color:var(--cinza-txt)">${r.categoria}</small></td>
+        <td style="text-align:center;font-weight:700;color:var(--cinza-txt)">${r.num}</td>
+        <td class="item-desc-td">${r.descricao}</td>
+        <td style="color:var(--cinza-txt)">${r.observacao || '—'}</td>
+        <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+        <td><div class="actions-cell">${acoes}</div></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function mudarStatus(id, novoStatus) {
+  if (!configured()) return;
+
+  // Atualizar botões imediatamente (feedback visual)
+  const btns = document.querySelectorAll(`#tr_${id} .status-btn`);
+  btns.forEach(b => b.disabled = true);
+
+  try {
+    const body = { status_manut: novoStatus };
+    if (novoStatus === 'RESOLVIDO') body.resolvido_em = new Date().toISOString();
+
+    await sbFetch(`itens_vistoria?id=eq.${id}`, {
+      method: 'PATCH',
+      body,
+      prefer: 'return=minimal'
+    });
+
+    // Atualizar localmente sem recarregar tudo
+    const idx = allFalhas.findIndex(f => f.id === id);
+    if (idx !== -1) allFalhas[idx].status = novoStatus;
+
+    renderPlacasCards();
+    aplicarFiltros();
+
+    const label = novoStatus === 'RESOLVIDO' ? 'Marcado como resolvido ✓'
+                : novoStatus === 'EM_ANDAMENTO' ? 'Em andamento' : 'Reaberto';
+    showToast(label, 'ok');
+
+  } catch(e) {
+    showToast('Erro ao atualizar status.', 'err');
+    btns.forEach(b => b.disabled = false);
+    console.error(e);
+  }
+}
+
+// ─────────────────────────────────────────
+// CONFIG BANNER — ocultar se configurado
+// ─────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (configured()) document.getElementById('config-banner').style.display = 'none';
+  initForm();
+});
+</script>
+</body>
+</html>
