@@ -451,15 +451,23 @@ function showEtapa(n){
 
 function updBtn(){
   const bm=document.getElementById('bm');
-  if(etapa===1){bm.textContent='Próximo →';bm.onclick=next}
-  else if(etapa===2){bm.textContent='Iniciar Vistoria →';bm.onclick=next}
-  else{
+  bm.style.background='#1B6B2F';
+  bm.disabled=false;
+  if(etapa===1){
+    bm.textContent='Próximo →';
+    bm.onclick=null;
+    bm.setAttribute('onclick','next()');
+  } else if(etapa===2){
+    bm.textContent='Iniciar Vistoria →';
+    bm.onclick=null;
+    bm.setAttribute('onclick','next()');
+  } else {
     const isLast=cat===CL.length-1;
     bm.textContent=isLast?'✓ Enviar Vistoria':'Próxima Categoria →';
-    bm.onclick=isLast?enviar:nextCat;
+    bm.onclick=null;
+    bm.setAttribute('onclick',isLast?'enviar()':'nextCat()');
     bm.style.background=isLast?'#1B6B2F':'#2E8B57';
   }
-  bm.disabled=false;
 }
 
 function next(){
@@ -703,7 +711,9 @@ if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 
 // Init
 document.getElementById('fd').value=new Date().toISOString().split('T')[0];
-selPsico('bem');showEtapa(1);
+selPsico('bem');
+etapa=1;cat=0;
+showEtapa(1);
 </script>
 </body>
 </html>
