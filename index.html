@@ -84,6 +84,7 @@ h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:6px;color:var(--
 .pcard.on-ruim .pchk{background:var(--r);border-color:var(--r)}
 .palert{display:none;margin-top:10px;background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:12px;padding:12px 14px;font-size:13px;color:#92400E;line-height:1.5;font-weight:500}
 .palert.on{display:block}
+.ps{font-size:12px;color:var(--sub);line-height:1.4;font-style:normal;display:block}
 
 /* PROGRESSO */
 .prog{background:var(--w);border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -141,7 +142,7 @@ h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:6px;color:var(--
 
 /* BOTTOM BAR */
 #bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:rgba(242,243,245,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--brd);padding:10px 16px max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;z-index:100}
-.bbk{padding:15px 18px;border-radius:14px;border:2px solid var(--brd);background:var(--w);font-size:14px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;display:none}
+.bbk{padding:15px 22px;border-radius:14px;border:2px solid var(--txt);background:var(--w);font-size:15px;font-weight:800;color:var(--txt);cursor:pointer;font-family:inherit;display:none;box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .bmn{flex:1;padding:15px;border-radius:14px;border:none;background:var(--g);color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(27,107,47,.3);font-family:inherit;letter-spacing:.1px;transition:.15s}
 .bmn:active{transform:scale(.97);box-shadow:none}
 .bmn:disabled{background:#aaa;box-shadow:none;cursor:not-allowed}
@@ -298,17 +299,17 @@ h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:6px;color:var(--
         <div class="pcards">
           <div class="pcard on-bem" id="pc-bem" onclick="selP('bem')">
             <span class="em">😊</span>
-            <div class="tx"><b>Bem e disposto</b><s>Descansado, focado, pronto para dirigir com segurança</s></div>
+            <div class="tx"><b>Bem e disposto</b><span class="ps">Descansado, focado, pronto para dirigir com segurança</span></div>
             <div class="pchk" id="pk-bem">✓</div>
           </div>
           <div class="pcard" id="pc-normal" onclick="selP('normal')">
             <span class="em">😐</span>
-            <div class="tx"><b>Normal / Razoável</b><s>Sem impedimentos, mas não no meu melhor dia</s></div>
+            <div class="tx"><b>Normal / Razoável</b><span class="ps">Sem impedimentos, mas não no meu melhor dia</span></div>
             <div class="pchk" id="pk-normal"></div>
           </div>
           <div class="pcard" id="pc-ruim" onclick="selP('indisposto')">
             <span class="em">😴</span>
-            <div class="tx"><b>Cansado / Indisposto</b><s>Com sono, doente ou algo que pode afetar minha direção</s></div>
+            <div class="tx"><b>Cansado / Indisposto</b><span class="ps">Com sono, doente ou algo que pode afetar minha direção</span></div>
             <div class="pchk" id="pk-ruim"></div>
           </div>
         </div>
@@ -428,7 +429,7 @@ function toast(m,t){
 async function api(path,opts){
   opts=opts||{};
   const r=await fetch(SB_URL+'/rest/v1/'+path,{
-    headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:opts.prefer||'return=representation'},
+    headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',...(opts.prefer?{Prefer:opts.prefer}:{})},
     method:opts.method||'GET',
     body:opts.body?JSON.stringify(opts.body):undefined
   });
@@ -620,7 +621,7 @@ async function enviar(){
     var vis=Array.isArray(res)?res[0]:res;
     for(var fi=0;fi<falhas.length;fi++){
       var f=falhas[fi];
-      await api('rpc/upsert_falha',{method:'POST',body:{p_placa:placa,p_vistoria_id:vis.id,p_data:data,p_item_numero:f.item_numero,p_categoria:f.categoria,p_descricao:f.descricao,p_observacao:f.observacao||''}});
+      await api('rpc/upsert_falha',{method:'POST',prefer:'',body:{p_placa:placa,p_vistoria_id:vis.id,p_data:data,p_item_numero:f.item_numero,p_categoria:f.categoria,p_descricao:f.descricao,p_observacao:f.observacao||''}});
     }
     document.getElementById('e3').style.display='none';
     document.getElementById('bar').style.display='none';
