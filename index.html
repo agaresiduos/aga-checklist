@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AGA Check List">
+<meta name="theme-color" content="#1B6B2F">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>AGA — Check List</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --g:#1B6B2F;--gm:#2E8B57;--gc:#D4EDDA;--gx:#F0FAF3;
+  --r:#DC2626;--rc:#FEF2F2;
+  --y:#D97706;--yc:#FFFBEB;
+  --bg:#F2F3F5;--w:#FFFFFF;--brd:#E2E5EA;
+  --txt:#111827;--sub:#6B7280;
+}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased}
+
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
+
+/* HEADER */
+header{background:var(--g);height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.logo{display:flex;align-items:center;gap:8px;color:#fff;font-size:15px;font-weight:700}
+.logo-i{width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff}
+.nav{display:flex;gap:2px;background:rgba(0,0,0,.2);border-radius:20px;padding:3px}
+.ntab{padding:5px 14px;border-radius:16px;border:none;background:transparent;color:rgba(255,255,255,.65);font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.ntab.on{background:#fff;color:var(--g)}
+
+/* SCROLL */
+#main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+#main::-webkit-scrollbar{display:none}
+
+/* PAGES */
+.page{display:none;padding:20px 16px 110px;min-height:100%}
+.page.on{display:block}
+
+/* DOTS */
+.dots{display:flex;align-items:center;gap:6px;margin-bottom:22px}
+.d{width:8px;height:8px;border-radius:4px;background:var(--brd);transition:.3s}
+.d.on{width:28px;background:var(--g)}
+.d.done{background:var(--gc)}
+.dlbl{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-left:4px}
+
+h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:6px;color:var(--txt)}
+.sub{font-size:13px;color:var(--sub);line-height:1.5;margin-bottom:24px}
+
+/* FIELDS */
+.fields{display:flex;flex-direction:column;gap:14px}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--sub)}
+.fld select,.fld input{
+  width:100%;padding:15px 16px;
+  border:2px solid var(--brd);border-radius:14px;
+  font-size:16px;color:var(--txt);background:var(--w);
+  outline:none;-webkit-appearance:none;appearance:none;
+  transition:border-color .15s;font-family:inherit;
+}
+.fld select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:44px}
+.fld select:focus,.fld input:focus{border-color:var(--g)}
+.fld input::placeholder{color:#C5C8CD}
+
+/* PSICO */
+.pcards{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.pcard{display:flex;align-items:center;gap:14px;padding:18px;border:2px solid var(--brd);border-radius:16px;background:var(--w);cursor:pointer;transition:.15s;-webkit-user-select:none;user-select:none}
+.pcard:active{opacity:.8;transform:scale(.98)}
+.pcard.on-bem{border-color:var(--g);background:var(--gx)}
+.pcard.on-normal{border-color:var(--y);background:var(--yc)}
+.pcard.on-ruim{border-color:var(--r);background:var(--rc)}
+.pcard .em{font-size:40px;line-height:1;flex-shrink:0}
+.pcard .tx{flex:1}
+.pcard .tx b{display:block;font-size:15px;font-weight:700;margin-bottom:3px}
+.pcard .tx s{font-size:12px;color:var(--sub);line-height:1.4;font-style:normal}
+.pcard.on-bem .tx b{color:var(--g)}
+.pcard.on-normal .tx b{color:var(--y)}
+.pcard.on-ruim .tx b{color:var(--r)}
+.pchk{width:24px;height:24px;border-radius:50%;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;transition:.15s}
+.pcard.on-bem .pchk{background:var(--g);border-color:var(--g)}
+.pcard.on-normal .pchk{background:var(--y);border-color:var(--y)}
+.pcard.on-ruim .pchk{background:var(--r);border-color:var(--r)}
+.palert{display:none;margin-top:10px;background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:12px;padding:12px 14px;font-size:13px;color:#92400E;line-height:1.5;font-weight:500}
+.palert.on{display:block}
+
+/* PROGRESSO */
+.prog{background:var(--w);border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.pbar{height:6px;background:var(--brd);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.pfill{height:100%;background:var(--g);border-radius:3px;transition:width .4s}
+.prow{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--sub)}
+.ftag{background:var(--rc);color:var(--r);font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;display:none}
+.ftag.on{display:block}
+
+/* CAT HEADER */
+.cathdr{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--w);border-radius:14px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.caticon{width:40px;height:40px;background:var(--g);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.catinfo strong{display:block;font-size:15px;font-weight:700}
+.catinfo span{font-size:11px;color:var(--sub)}
+
+/* ITEM CARDS */
+.ilist{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.ic{background:var(--w);border-radius:14px;border:2px solid var(--brd);overflow:hidden;transition:.15s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ic.ok{border-color:var(--g);background:var(--gx)}
+.ic.fa{border-color:var(--r);background:var(--rc)}
+.ictop{display:flex;align-items:center;gap:12px;padding:16px}
+.inum{width:32px;height:32px;border-radius:50%;background:var(--bg);border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--sub);flex-shrink:0;transition:.15s}
+.ic.ok .inum{background:var(--g);border-color:var(--g);color:#fff}
+.ic.fa .inum{background:var(--r);border-color:var(--r);color:#fff}
+.itxt{flex:1;font-size:14px;line-height:1.4;font-weight:500}
+.ic.ok .itxt{color:var(--g)}
+.ic.fa .itxt{color:var(--r)}
+.ibtns{display:flex;border-top:1.5px solid var(--brd)}
+.ic.ok .ibtns{border-top-color:#c3e6cb}
+.ic.fa .ibtns{border-top-color:#fecaca}
+.ibtn{flex:1;padding:13px;border:none;background:transparent;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;text-transform:uppercase;letter-spacing:.3px;font-family:inherit;transition:.1s}
+.ibtn+.ibtn{border-left:1.5px solid var(--brd)}
+.ic.ok .ibtn+.ibtn{border-left-color:#c3e6cb}
+.ic.fa .ibtn+.ibtn{border-left-color:#fecaca}
+.ibtn.bok{background:var(--g);color:#fff}
+.ibtn.bfa{background:var(--r);color:#fff}
+.iobs{display:none;padding:0 16px 14px}
+.iobs.on{display:block}
+.iobs input{width:100%;padding:10px 12px;border:1.5px solid #fca5a5;border-radius:10px;font-size:13px;background:#fff;outline:none;font-family:inherit}
+.iobs input:focus{border-color:var(--r)}
+.iobs input::placeholder{color:#d1d5db}
+
+/* OUTROS */
+.owrap{background:var(--w);border-radius:14px;border:2px dashed var(--brd);overflow:hidden;margin-bottom:8px}
+.orow{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--brd)}
+.orow:last-child{border-bottom:none}
+.onum{width:26px;height:26px;border-radius:50%;background:var(--gx);border:1.5px solid var(--gc);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--g);flex-shrink:0}
+.oinp{flex:1;padding:9px 10px;border:1.5px solid var(--brd);border-radius:8px;font-size:13px;background:#fff;outline:none;font-family:inherit;min-width:0}
+.oinp:focus{border-color:var(--g)}
+.otog{display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--brd);flex-shrink:0}
+.otog input{display:none}
+.otog label{padding:8px 10px;font-size:10px;font-weight:700;cursor:pointer;color:var(--sub);text-transform:uppercase;font-family:inherit}
+.otog input[value="OK"]:checked+label{background:var(--g);color:#fff}
+.otog input[value="FALHA"]:checked+label{background:var(--r);color:#fff}
+
+/* BOTTOM BAR */
+#bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:rgba(242,243,245,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--brd);padding:10px 16px max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;z-index:100}
+.bbk{padding:15px 18px;border-radius:14px;border:2px solid var(--brd);background:var(--w);font-size:14px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;display:none}
+.bmn{flex:1;padding:15px;border-radius:14px;border:none;background:var(--g);color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(27,107,47,.3);font-family:inherit;letter-spacing:.1px;transition:.15s}
+.bmn:active{transform:scale(.97);box-shadow:none}
+.bmn:disabled{background:#aaa;box-shadow:none;cursor:not-allowed}
+
+/* SUCESSO */
+#sucesso{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 24px}
+#sucesso.on{display:flex}
+.sico{width:84px;height:84px;background:var(--gc);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 20px;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.stit{font-size:24px;font-weight:800;color:var(--g);margin-bottom:8px}
+.ssub{font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:20px}
+.sfl{background:var(--rc);color:var(--r);border-radius:10px;padding:10px 18px;margin-bottom:20px;font-size:13px;font-weight:600;display:none}
+.sfl.on{display:block}
+.bnov{padding:13px 36px;border-radius:14px;border:none;background:var(--g);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+
+/* ADMIN */
+.admwrap{padding:4px 0}
+.admtit{font-size:22px;font-weight:800;margin-bottom:16px}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.rcard{background:var(--w);border-radius:12px;padding:14px;border-top:3px solid var(--brd);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:.15s}
+.rcard:active{transform:scale(.97)}
+.rcard.sel{border-top-color:var(--g)}
+.rplaca{font-size:16px;font-weight:800;margin-bottom:2px}
+.rdesc{font-size:10px;color:var(--sub);margin-bottom:10px}
+.rstats{display:flex;gap:5px}
+.rst{flex:1;text-align:center;border-radius:6px;padding:5px 2px;font-size:9px;font-weight:700}
+.rst .rn{display:block;font-size:17px;font-weight:800;line-height:1.2}
+.rst.p{background:var(--rc);color:var(--r)}
+.rst.a{background:var(--yc);color:var(--y)}
+.rst.r{background:var(--gc);color:var(--g)}
+.filts{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.fbtn{padding:6px 13px;border-radius:14px;border:1.5px solid var(--brd);background:var(--w);font-size:11px;font-weight:700;cursor:pointer;color:var(--sub);white-space:nowrap;font-family:inherit}
+.fbtn:active{opacity:.7}
+.fbtn.on{background:var(--txt);border-color:var(--txt);color:#fff}
+.fbtn.todas.on{background:var(--g);border-color:var(--g)}
+.fsel{padding:6px 12px;border-radius:14px;border:1.5px solid var(--brd);font-size:11px;background:var(--w);outline:none;color:var(--txt);-webkit-appearance:none;font-family:inherit}
+.fcards{display:flex;flex-direction:column;gap:8px}
+.fcard{background:var(--w);border-radius:12px;border-left:4px solid var(--brd);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.fcard.p{border-left-color:var(--r)}
+.fcard.a{border-left-color:var(--y)}
+.fcard.r{border-left-color:var(--g)}
+.fcard.alerta{background:#FFFBEA}
+.fctop{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 6px;gap:8px}
+.fcmeta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ptag{background:var(--txt);color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.4px}
+.fdt{font-size:10px;color:var(--sub)}
+.badge{display:inline-flex;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+.badge.p{background:var(--rc);color:var(--r)}
+.badge.a{background:var(--yc);color:var(--y)}
+.badge.r{background:var(--gc);color:var(--g)}
+.fcbody{padding:0 12px 12px}
+.fcpalert{font-size:11px;color:#92400E;background:#FEF3C7;border-radius:6px;padding:3px 8px;margin-bottom:6px;display:none;font-weight:600}
+.fcpalert.on{display:inline-block}
+.fcdesc{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:3px}
+.fcreinc{background:var(--yc);color:var(--y);border-radius:6px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:3px}
+.fcobs{font-size:12px;color:var(--r);background:var(--rc);padding:4px 8px;border-radius:6px;margin-bottom:6px;display:none}
+.fcobs.on{display:block}
+.fcinfo{font-size:11px;color:var(--sub);margin-bottom:8px}
+.fcacts{display:flex;gap:6px;flex-wrap:wrap}
+.act{padding:7px 12px;border-radius:8px;border:1.5px solid currentColor;font-size:11px;font-weight:700;cursor:pointer;background:transparent;white-space:nowrap;font-family:inherit}
+.act:active{opacity:.7}
+.act:disabled{opacity:.3;cursor:not-allowed}
+.act.aa{color:var(--y)}
+.act.ar{color:var(--g);background:var(--gc);border-color:var(--g)}
+.act.ap{color:var(--sub)}
+.empty{text-align:center;padding:48px 24px;color:var(--sub)}
+.empty .ei{font-size:36px;margin-bottom:10px}
+
+/* PWA */
+#pwab{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid var(--brd);padding:12px 16px;box-shadow:0 -4px 20px rgba(0,0,0,.1);max-width:430px;margin:0 auto;align-items:center;gap:10px}
+#pwab .pi{width:40px;height:40px;background:var(--g);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0}
+#pwab .pt{flex:1}
+#pwab .pt strong{display:block;font-size:13px;font-weight:700}
+#pwab .pt span{font-size:11px;color:var(--sub)}
+#pwab .pb{padding:8px 14px;background:var(--g);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+#pwab .px{width:26px;height:26px;border:none;background:var(--bg);border-radius:50%;font-size:13px;cursor:pointer;color:var(--sub);font-family:inherit}
+
+#toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--txt);color:#fff;padding:9px 20px;border-radius:20px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:.25s;z-index:999;white-space:nowrap;pointer-events:none;opacity:0}
+#toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+#toast.ok{background:var(--g)}
+#toast.err{background:var(--r)}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-i">A</div>
+      AGA Resíduos
+    </div>
+    <div class="nav">
+      <button class="ntab on" id="tab-v" onclick="goView('v')">Vistoria</button>
+      <button class="ntab" id="tab-a" onclick="goView('a')">Admin</button>
+    </div>
+  </header>
+
+  <div id="main">
+
+    <!-- VIEW VISTORIA -->
+    <div id="pv" class="page on">
+
+      <!-- SUCESSO -->
+      <div id="sucesso">
+        <div class="sico">✅</div>
+        <div class="stit">Vistoria enviada!</div>
+        <div class="ssub">Dados salvos com sucesso.<br>Falhas registradas no painel.</div>
+        <div class="sfl" id="sfl"></div>
+        <button class="bnov" onclick="novo()">Nova Vistoria</button>
+      </div>
+
+      <!-- ETAPA 1 -->
+      <div id="e1">
+        <div class="dots">
+          <div class="d on"></div><div class="d"></div><div class="d"></div>
+          <span class="dlbl">Etapa 1 de 3</span>
+        </div>
+        <h1>Dados da<br>Vistoria</h1>
+        <p class="sub">Informe o veículo e o motorista para iniciar.</p>
+        <div class="fields">
+          <div class="fld">
+            <label>Placa do Veículo *</label>
+            <select id="fp">
+              <option value="">Selecione...</option>
+              <option value="ITZ5A45">ITZ5A45 — Caminhão Tanque</option>
+              <option value="JPX8D88">JPX8D88 — Caminhão Sider</option>
+              <option value="KZI6194">KZI6194 — Compactador</option>
+            </select>
+          </div>
+          <div class="fld">
+            <label>Motorista *</label>
+            <input id="fm" type="text" placeholder="Nome completo">
+          </div>
+          <div class="fld">
+            <label>KM Atual</label>
+            <input id="fk" type="number" placeholder="Ex: 85420" inputmode="numeric">
+          </div>
+          <div class="fld">
+            <label>Data *</label>
+            <input id="fd" type="date">
+          </div>
+        </div>
+      </div>
+
+      <!-- ETAPA 2 -->
+      <div id="e2" style="display:none">
+        <div class="dots">
+          <div class="d done"></div><div class="d on"></div><div class="d"></div>
+          <span class="dlbl">Etapa 2 de 3</span>
+        </div>
+        <h1>Como você está<br>para dirigir hoje?</h1>
+        <p class="sub" style="background:var(--gx);border-left:3px solid var(--g);padding:10px 12px;border-radius:10px;margin-bottom:24px">
+          Resposta sigilosa. Existe para proteger você e todos no trânsito.
+        </p>
+        <div class="pcards">
+          <div class="pcard on-bem" id="pc-bem" onclick="selP('bem')">
+            <span class="em">😊</span>
+            <div class="tx"><b>Bem e disposto</b><s>Descansado, focado, pronto para dirigir com segurança</s></div>
+            <div class="pchk" id="pk-bem">✓</div>
+          </div>
+          <div class="pcard" id="pc-normal" onclick="selP('normal')">
+            <span class="em">😐</span>
+            <div class="tx"><b>Normal / Razoável</b><s>Sem impedimentos, mas não no meu melhor dia</s></div>
+            <div class="pchk" id="pk-normal"></div>
+          </div>
+          <div class="pcard" id="pc-ruim" onclick="selP('indisposto')">
+            <span class="em">😴</span>
+            <div class="tx"><b>Cansado / Indisposto</b><s>Com sono, doente ou algo que pode afetar minha direção</s></div>
+            <div class="pchk" id="pk-ruim"></div>
+          </div>
+        </div>
+        <div class="palert" id="palert">
+          ⚠️ <strong>Sua resposta foi registrada.</strong> O gestor será notificado. Comunique antes de sair. Sua segurança é prioridade.
+        </div>
+      </div>
+
+      <!-- ETAPA 3 -->
+      <div id="e3" style="display:none">
+        <div class="dots">
+          <div class="d done"></div><div class="d done"></div><div class="d on"></div>
+          <span class="dlbl">Etapa 3 de 3</span>
+        </div>
+        <div class="prog">
+          <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+          <div class="prow">
+            <span id="ptxt">0 de 44 itens</span>
+            <span class="ftag" id="ftag">0 falhas</span>
+          </div>
+        </div>
+        <div class="cathdr">
+          <div class="caticon" id="cicon">📋</div>
+          <div class="catinfo">
+            <strong id="cname">—</strong>
+            <span id="ccount">—</span>
+          </div>
+        </div>
+        <div class="ilist" id="ilist"></div>
+        <div id="outros-s" style="display:none">
+          <div class="cathdr" style="margin-top:4px">
+            <div class="caticon">📝</div>
+            <div class="catinfo"><strong>Outros</strong><span>Itens não listados acima</span></div>
+          </div>
+          <div class="owrap" id="owrap"></div>
+        </div>
+      </div>
+
+    </div><!-- /pv -->
+
+    <!-- VIEW ADMIN -->
+    <div id="pa" class="page">
+      <div class="admwrap">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div class="admtit">Manutenção</div>
+          <button class="fbtn" onclick="loadAdmin()">↻ Atualizar</button>
+        </div>
+        <div class="rgrid" id="rgrid"></div>
+        <div class="filts" id="pbtns"></div>
+        <div class="filts" style="margin-top:-4px">
+          <select class="fsel" id="fst" onchange="filtrar()">
+            <option value="">Todos status</option>
+            <option value="PENDENTE">🔴 Pendente</option>
+            <option value="EM_ANDAMENTO">🟡 Andamento</option>
+            <option value="RESOLVIDO">🟢 Resolvido</option>
+          </select>
+          <select class="fsel" id="fcat" onchange="filtrar()">
+            <option value="">Todas cats.</option>
+          </select>
+          <select class="fsel" id="fps" onchange="filtrar()">
+            <option value="">Todos</option>
+            <option value="indisposto">⚠️ Indispostos</option>
+          </select>
+        </div>
+        <div class="fcards" id="fcards">
+          <div class="empty"><div class="ei">⏳</div><p>Carregando...</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div id="bar">
+  <button class="bbk" id="bbk" onclick="back()">←</button>
+  <button class="bmn" id="bmn">—</button>
+</div>
+
+<div id="pwab">
+  <div class="pi">A</div>
+  <div class="pt"><strong>Instalar AGA Check List</strong><span>Adicionar à tela inicial</span></div>
+  <button class="pb" onclick="installPWA()">Instalar</button>
+  <button class="px" onclick="document.getElementById('pwab').style.display='none'">✕</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SB_URL='https://wrjxntsljzanxxvkmzps.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyanhudHNsanphbnh4dmttenBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODk3NjYsImV4cCI6MjA4OTg2NTc2Nn0.xtgRoDU4nQMTSE2hMhFG2bGmMtAG8JabvF3KnP2Hleo';
+
+const FROTA=[{p:'ITZ5A45',d:'Caminhão Tanque'},{p:'JPX8D88',d:'Caminhão Sider'},{p:'KZI6194',d:'Compactador'}];
+
+const CL=[
+  {c:'Documentação',i:'📋',it:[{n:1,t:'Documentos do veículo e licenças estão no veículo?'},{n:2,t:'Quilometragem conferida e anotada?'}]},
+  {c:'Sistema Elétrico',i:'💡',it:[{n:3,t:'Buzina funcionando?'},{n:4,t:'Para-brisa e limpador em perfeito estado?'},{n:5,t:'Esguicho de água do limpador funcionando?'},{n:6,t:'Luz interna funcionando?'},{n:7,t:'Luz do painel funcionando?'},{n:8,t:'Farol alto funcionando?'},{n:9,t:'Farol baixo funcionando?'},{n:10,t:'Luz de marcha ré funcionando?'},{n:11,t:'Pisca alerta funcionando?'},{n:12,t:'Lanternas e setas funcionando?'},{n:13,t:'Luz de freio funcionando?'},{n:14,t:'Luz de placa funcionando?'}]},
+  {c:'Motor e Fluidos',i:'🔩',it:[{n:15,t:'Nível de óleo do motor adequado?'},{n:16,t:'Nível do fluido de freio adequado?'},{n:17,t:'Água do radiador em nível adequado?'},{n:18,t:'Vazamentos de óleo aparentes?'}]},
+  {c:'Pneus e Rodas',i:'🛞',it:[{n:19,t:'Condições gerais dos pneus (sulcos, danos, calibragem)?'},{n:20,t:'Macaco e chave de roda disponíveis?'}]},
+  {c:'Equipamentos',i:'🔧',it:[{n:21,t:'Tacógrafo funcionando?'},{n:22,t:'Termômetro funcionando?'},{n:23,t:'Mangueiras e conexões de sucção em condições de uso?'},{n:24,t:'Ferramentas operacionais disponíveis?'}]},
+  {c:'Segurança',i:'🛡️',it:[{n:25,t:'Cinto de segurança em condições de uso?'},{n:26,t:'Triângulo de sinalização disponível?'},{n:27,t:'Retrovisores internos e externos em bom estado?'},{n:28,t:'Identificação de proibição de celular no painel?'},{n:29,t:'Freio de serviço funcionando?'},{n:30,t:'Freio de estacionamento funcionando?'},{n:31,t:'Proteção de todas as partes móveis?'},{n:32,t:'Fitas refletivas nos lados externos?'},{n:33,t:'Controle de emissão de gases (Ringelmann)?'},{n:34,t:'Calço disponível no veículo?'},{n:35,t:'Alerta sonoro de marcha ré funcionando?'},{n:36,t:'Kit de EPIs disponível?'},{n:37,t:'Escada de acesso e corrimão em bom estado?'}]},
+  {c:'Emergência',i:'🧯',it:[{n:38,t:'Extintor de incêndio dentro da validade?'}]},
+  {c:'Estrutura',i:'🚛',it:[{n:39,t:'Portas com maçanetas e trincos em bom estado?'},{n:40,t:'Estado geral da lataria e carroceria?'},{n:41,t:'Climatização funcionando?'},{n:42,t:'Limpeza do veículo e assentos em boas condições?'},{n:43,t:'Logotipo da empresa e numeração visíveis?'},{n:44,t:'Sinalização da empresa em bom estado?'}]}
+];
+const TOTAL=CL.reduce((s,c)=>s+c.it.length,0);
+
+// ESTADO — tudo em variáveis simples, sem conflito
+let etapa=1, cat=0, resp={}, obs={}, psico='bem';
+
+// TOAST
+function toast(m,t){
+  const el=document.getElementById('toast');
+  el.textContent=m; el.className='on '+(t||'ok');
+  clearTimeout(el._t); el._t=setTimeout(()=>{el.className=''},2800);
+}
+
+// API
+async function api(path,opts){
+  opts=opts||{};
+  const r=await fetch(SB_URL+'/rest/v1/'+path,{
+    headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:opts.prefer||'return=representation'},
+    method:opts.method||'GET',
+    body:opts.body?JSON.stringify(opts.body):undefined
+  });
+  if(!r.ok){const e=await r.text();throw new Error('HTTP '+r.status+': '+e);}
+  if(r.status===204)return null;
+  return r.json();
+}
+
+// VIEWS
+function goView(v){
+  document.getElementById('pv').classList.toggle('on',v==='v');
+  document.getElementById('pa').classList.toggle('on',v==='a');
+  document.getElementById('tab-v').classList.toggle('on',v==='v');
+  document.getElementById('tab-a').classList.toggle('on',v==='a');
+  document.getElementById('bar').style.display=v==='v'?'flex':'none';
+  if(v==='a') loadAdmin();
+}
+
+// MOSTRAR ETAPA — controla visibilidade diretamente
+function showEtapa(n){
+  etapa=n;
+  document.getElementById('sucesso').style.display='none';
+  document.getElementById('e1').style.display=n===1?'block':'none';
+  document.getElementById('e2').style.display=n===2?'block':'none';
+  document.getElementById('e3').style.display=n===3?'block':'none';
+  document.getElementById('main').scrollTo(0,0);
+  document.getElementById('bbk').style.display=n>1?'block':'none';
+  setBtn();
+}
+
+// CONFIGURAR BOTÃO PRINCIPAL — função isolada sem side effects
+function setBtn(){
+  const btn=document.getElementById('bmn');
+  btn.disabled=false;
+  if(etapa===1){
+    btn.textContent='Próximo →';
+    btn.onclick=irParaEtapa2;
+  } else if(etapa===2){
+    btn.textContent='Iniciar Vistoria →';
+    btn.onclick=irParaEtapa3;
+  } else {
+    const ultima=cat===CL.length-1;
+    btn.textContent=ultima?'✓ Enviar Vistoria':'Próxima Categoria →';
+    btn.onclick=ultima?enviar:proximaCat;
+    btn.style.background=ultima?'#1B6B2F':'#2E8B57';
+  }
+  if(etapa!==3) btn.style.background='#1B6B2F';
+}
+
+function irParaEtapa2(){
+  if(!document.getElementById('fp').value){toast('Selecione a placa.','err');return;}
+  if(!document.getElementById('fm').value.trim()){toast('Informe o motorista.','err');return;}
+  if(!document.getElementById('fd').value){toast('Informe a data.','err');return;}
+  showEtapa(2);
+}
+
+function irParaEtapa3(){
+  showEtapa(3);
+  cat=0;
+  renderCat();
+}
+
+function back(){
+  if(etapa===2) showEtapa(1);
+  else if(etapa===3){
+    if(cat>0){cat--;renderCat();}
+    else showEtapa(2);
+  }
+}
+
+// PSICO
+function selP(v){
+  psico=v;
+  var map={bem:'bem',normal:'normal',indisposto:'ruim'};
+  ['bem','normal','ruim'].forEach(function(k){
+    var val=k==='ruim'?'indisposto':k;
+    var el=document.getElementById('pc-'+k);
+    var pk=document.getElementById('pk-'+k);
+    el.className='pcard'+(v===val?' on-'+k:'');
+    pk.textContent=v===val?'✓':'';
+  });
+  document.getElementById('palert').classList.toggle('on',v==='indisposto');
+}
+
+// PROGRESSO
+function updProg(){
+  var done=Object.keys(resp).length;
+  var f=Object.values(resp).filter(function(x){return x==='FALHA';}).length;
+  var pct=Math.round(done/TOTAL*100);
+  document.getElementById('pfill').style.width=pct+'%';
+  document.getElementById('ptxt').textContent=done+' de '+TOTAL+' itens';
+  var ft=document.getElementById('ftag');
+  ft.className='ftag'+(f>0?' on':'');
+  ft.textContent=f+(f===1?' falha':' falhas');
+}
+
+// RENDERIZAR CATEGORIA
+function renderCat(){
+  var c=CL[cat];
+  document.getElementById('cicon').textContent=c.i;
+  document.getElementById('cname').textContent=c.c;
+  document.getElementById('ccount').textContent='Categoria '+(cat+1)+' de '+CL.length+' · '+c.it.length+' itens';
+  var ultima=cat===CL.length-1;
+  document.getElementById('outros-s').style.display=ultima?'block':'none';
+  if(ultima) renderOutros();
+  var list=document.getElementById('ilist');
+  list.innerHTML='';
+  c.it.forEach(function(item){
+    var r=resp[item.n]||null;
+    var div=document.createElement('div');
+    div.className='ic'+(r==='OK'?' ok':r==='FALHA'?' fa':'');
+    div.id='ic'+item.n;
+    div.innerHTML='<div class="ictop"><div class="inum">'+item.n+'</div><div class="itxt">'+item.t+'</div></div>'
+      +'<div class="ibtns">'
+      +'<button class="ibtn'+(r==='OK'?' bok':'')+'" onclick="mark('+item.n+',\'OK\')">✓ OK</button>'
+      +'<button class="ibtn'+(r==='FALHA'?' bfa':'')+'" onclick="mark('+item.n+',\'FALHA\')">✗ Falha</button>'
+      +'</div>'
+      +'<div class="iobs'+(r==='FALHA'?' on':'')+'" id="io'+item.n+'">'
+      +'<input type="text" placeholder="Descreva a falha..." value="'+(obs[item.n]||'')+'" oninput="obs['+item.n+']=this.value">'
+      +'</div>';
+    list.appendChild(div);
+  });
+  setBtn();
+  updProg();
+}
+
+function renderOutros(){
+  var w=document.getElementById('owrap');
+  w.innerHTML='';
+  for(var i=1;i<=4;i++){
+    var row=document.createElement('div');
+    row.className='orow';
+    row.innerHTML='<div class="onum">'+(44+i)+'</div>'
+      +'<input type="text" class="oinp" id="od'+i+'" placeholder="Item não listado...">'
+      +'<div class="otog">'
+      +'<input type="radio" name="o'+i+'" id="oo'+i+'" value="OK" checked><label for="oo'+i+'">OK</label>'
+      +'<input type="radio" name="o'+i+'" id="of'+i+'" value="FALHA"><label for="of'+i+'">Falha</label>'
+      +'</div>';
+    w.appendChild(row);
+  }
+}
+
+function mark(n,v){
+  resp[n]=v;
+  var card=document.getElementById('ic'+n);
+  card.className='ic '+(v==='OK'?'ok':'fa');
+  var btns=card.querySelectorAll('.ibtn');
+  btns[0].className='ibtn'+(v==='OK'?' bok':'');
+  btns[1].className='ibtn'+(v==='FALHA'?' bfa':'');
+  var io=document.getElementById('io'+n);
+  io.className='iobs'+(v==='FALHA'?' on':'');
+  if(v==='FALHA') io.querySelector('input').focus();
+  updProg();
+  setBtn();
+}
+
+function proximaCat(){
+  var missing=CL[cat].it.filter(function(x){return !resp[x.n];}).length;
+  if(missing>0){toast(missing+' item(ns) sem resposta.','err');return;}
+  cat++;
+  renderCat();
+  document.getElementById('main').scrollTo(0,0);
+}
+
+// ENVIAR
+async function enviar(){
+  var missing=CL[cat].it.filter(function(x){return !resp[x.n];}).length;
+  if(missing>0){toast(missing+' item(ns) sem resposta.','err');return;}
+  var placa=document.getElementById('fp').value;
+  var mot=document.getElementById('fm').value.trim();
+  var km=parseInt(document.getElementById('fk').value)||null;
+  var data=document.getElementById('fd').value;
+  var falhas=[];
+  CL.forEach(function(c){
+    c.it.forEach(function(x){
+      if(resp[x.n]==='FALHA') falhas.push({item_numero:x.n,categoria:c.c,descricao:x.t,observacao:obs[x.n]||'',status_manut:'PENDENTE'});
+    });
+  });
+  for(var i=1;i<=4;i++){
+    var d=(document.getElementById('od'+i)||{}).value||'';
+    d=d.trim();
+    var r=document.querySelector('input[name="o'+i+'"]:checked');
+    if(r&&r.value==='FALHA'&&d) falhas.push({item_numero:44+i,categoria:'Outros',descricao:d,observacao:'',status_manut:'PENDENTE'});
+  }
+  var btn=document.getElementById('bmn');
+  btn.disabled=true; btn.textContent='Enviando...';
+  try{
+    var res=await api('vistorias',{method:'POST',body:{placa:placa,motorista:mot,data_vistoria:data,km:km,total_falhas:falhas.length,estado_psicossocial:psico}});
+    var vis=Array.isArray(res)?res[0]:res;
+    for(var fi=0;fi<falhas.length;fi++){
+      var f=falhas[fi];
+      await api('rpc/upsert_falha',{method:'POST',body:{p_placa:placa,p_vistoria_id:vis.id,p_data:data,p_item_numero:f.item_numero,p_categoria:f.categoria,p_descricao:f.descricao,p_observacao:f.observacao||''}});
+    }
+    document.getElementById('e3').style.display='none';
+    document.getElementById('bar').style.display='none';
+    var sf=document.getElementById('sfl');
+    if(falhas.length>0){sf.textContent=falhas.length+' falha(s) registrada(s) no painel.';sf.className='sfl on';}
+    document.getElementById('sucesso').style.display='flex';
+    document.getElementById('main').scrollTo(0,0);
+  }catch(e){
+    toast('Erro: '+String(e.message).substring(0,60),'err');
+    btn.disabled=false; setBtn();
+  }
+}
+
+function novo(){
+  document.getElementById('sucesso').style.display='none';
+  document.getElementById('sfl').className='sfl';
+  document.getElementById('bar').style.display='flex';
+  document.getElementById('fm').value='';
+  document.getElementById('fk').value='';
+  document.getElementById('fp').value='';
+  document.getElementById('fd').value=new Date().toISOString().split('T')[0];
+  resp={}; obs={}; cat=0; psico='bem';
+  selP('bem');
+  showEtapa(1);
+}
+
+// ADMIN
+var allF=[];
+async function loadAdmin(){
+  document.getElementById('fcards').innerHTML='<div class="empty"><div class="ei">⏳</div><p>Carregando...</p></div>';
+  try{
+    var d=await api('itens_vistoria?select=*,vistorias(placa,motorista,data_vistoria,km,estado_psicossocial)&order=criado_em.desc');
+    allF=d.map(function(r){return{id:r.id,data:r.primeira_data||r.vistorias&&r.vistorias.data_vistoria||'',placa:r.vistorias&&r.vistorias.placa||'',motorista:r.vistorias&&r.vistorias.motorista||'',km:r.vistorias&&r.vistorias.km||'',psico:r.vistorias&&r.vistorias.estado_psicossocial||'bem',categoria:r.categoria,num:r.item_numero,desc:r.descricao,obs:r.observacao||'',status:r.status_manut,oc:r.ocorrencias||1};});
+    renderResumo(); renderPbtns(); popCats(); filtrar();
+  }catch(e){document.getElementById('fcards').innerHTML='<div class="empty"><div class="ei">❌</div><p>'+e.message+'</p></div>';}
+}
+
+function renderResumo(){
+  var g=document.getElementById('rgrid'); g.innerHTML='';
+  FROTA.forEach(function(v){
+    var fv=allF.filter(function(f){return f.placa===v.p;});
+    var p=fv.filter(function(f){return f.status==='PENDENTE';}).length;
+    var a=fv.filter(function(f){return f.status==='EM_ANDAMENTO';}).length;
+    var r=fv.filter(function(f){return f.status==='RESOLVIDO';}).length;
+    g.innerHTML+='<div class="rcard" onclick="selPlaca(\''+v.p+'\')">'
+      +'<div class="rplaca">'+v.p+'</div><div class="rdesc">'+v.d+'</div>'
+      +'<div class="rstats"><div class="rst p"><span class="rn">'+p+'</span>Pend.</div>'
+      +'<div class="rst a"><span class="rn">'+a+'</span>And.</div>'
+      +'<div class="rst r"><span class="rn">'+r+'</span>OK</div></div></div>';
+  });
+}
+
+function renderPbtns(){
+  var w=document.getElementById('pbtns');
+  w.innerHTML='<button class="fbtn todas on" data-p="" onclick="selPlaca(\'\')">Todas</button>';
+  FROTA.forEach(function(v){w.innerHTML+='<button class="fbtn" data-p="'+v.p+'" onclick="selPlaca(\''+v.p+'\')">'+v.p+'</button>';});
+  w.dataset.sel='';
+}
+
+function selPlaca(p){
+  document.querySelectorAll('#pbtns .fbtn').forEach(function(b){b.classList.toggle('on',b.dataset.p===p||(p===''&&b.classList.contains('todas')));});
+  document.getElementById('pbtns').dataset.sel=p;
+  filtrar();
+}
+
+function popCats(){
+  var fc=document.getElementById('fcat');
+  fc.innerHTML='<option value="">Todas cats.</option>';
+  var cats=[]; allF.forEach(function(f){if(cats.indexOf(f.categoria)<0)cats.push(f.categoria);});
+  cats.forEach(function(c){fc.innerHTML+='<option value="'+c+'">'+c+'</option>';});
+}
+
+function filtrar(){
+  var fp=(document.getElementById('pbtns').dataset.sel)||'';
+  var fs=document.getElementById('fst').value;
+  var fc=document.getElementById('fcat').value;
+  var fpsico=document.getElementById('fps').value;
+  var rows=allF.filter(function(r){
+    if(fp&&r.placa!==fp)return false;
+    if(fs&&r.status!==fs)return false;
+    if(fc&&r.categoria!==fc)return false;
+    if(fpsico==='indisposto'&&r.psico!=='indisposto')return false;
+    return true;
+  });
+  renderCards(rows);
+}
+
+var PE={bem:'😊',normal:'😐',indisposto:'😴'};
+
+function renderCards(rows){
+  var w=document.getElementById('fcards');
+  if(!rows.length){w.innerHTML='<div class="empty"><div class="ei">🎉</div><p>Nenhuma falha encontrada.</p></div>';return;}
+  w.innerHTML=rows.map(function(r){
+    var bc=r.status==='PENDENTE'?'p':r.status==='EM_ANDAMENTO'?'a':'r';
+    var bl=r.status==='PENDENTE'?'🔴 Pendente':r.status==='EM_ANDAMENTO'?'🟡 Andamento':'🟢 Resolvido';
+    var df=r.data?r.data.split('-').reverse().join('/'):'—';
+    var km=r.km?Number(r.km).toLocaleString('pt-BR')+' km':'—';
+    var reinc=r.oc>1?'<span class="fcreinc">⚠️ '+r.oc+'x</span>':'';
+    var alerta=r.psico==='indisposto'?'alerta':'';
+    var pa=r.psico==='indisposto'?'<span class="fcpalert on">😴 Motorista indisposto</span><br>':'';
+    var obsH=r.obs?'<div class="fcobs on">⚠️ '+r.obs+'</div>':'';
+    var ac='';
+    if(r.status==='PENDENTE') ac='<button class="act aa" onclick="mudar('+r.id+',\'EM_ANDAMENTO\')">→ Andamento</button><button class="act ar" onclick="mudar('+r.id+',\'RESOLVIDO\')">✓ Resolvido</button>';
+    else if(r.status==='EM_ANDAMENTO') ac='<button class="act ar" onclick="mudar('+r.id+',\'RESOLVIDO\')">✓ Resolvido</button><button class="act ap" onclick="mudar('+r.id+',\'PENDENTE\')">↩ Pendente</button>';
+    else ac='<button class="act ap" onclick="mudar('+r.id+',\'PENDENTE\')">↩ Reabrir</button>';
+    return '<div class="fcard '+bc+' '+alerta+'" id="fc'+r.id+'"><div class="fctop"><div class="fcmeta"><span class="ptag">'+r.placa+'</span><span class="fdt">'+df+' · '+km+'</span></div><span class="badge '+bc+'">'+bl+'</span></div><div class="fcbody">'+pa+'<div class="fcdesc">'+r.num+'. '+r.desc+reinc+'</div>'+obsH+'<div class="fcinfo">👤 '+r.motorista+' · 📂 '+r.categoria+'</div><div class="fcacts">'+ac+'</div></div></div>';
+  }).join('');
+}
+
+async function mudar(id,novo){
+  document.querySelectorAll('#fc'+id+' .act').forEach(function(b){b.disabled=true;});
+  try{
+    await api('itens_vistoria?id=eq.'+id,{method:'PATCH',body:Object.assign({status_manut:novo},novo==='RESOLVIDO'?{resolvido_em:new Date().toISOString()}:{}),prefer:'return=minimal'});
+    var i=allF.findIndex(function(f){return f.id===id;});
+    if(i!==-1) allF[i].status=novo;
+    renderResumo(); filtrar();
+    toast(novo==='RESOLVIDO'?'✓ Resolvido':novo==='EM_ANDAMENTO'?'→ Em andamento':'↩ Reaberto','ok');
+  }catch(e){
+    toast('Erro: '+e.message,'err');
+    document.querySelectorAll('#fc'+id+' .act').forEach(function(b){b.disabled=false;});
+  }
+}
+
+// PWA
+var deferredPrompt;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('pwab').style.display='flex';});
+function installPWA(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){document.getElementById('pwab').style.display='none';deferredPrompt=null;});}
+window.addEventListener('appinstalled',function(){document.getElementById('pwab').style.display='none';});
+if('serviceWorker'in navigator) navigator.serviceWorker.register('sw.js');
+
+// INIT
+document.getElementById('fd').value=new Date().toISOString().split('T')[0];
+selP('bem');
+showEtapa(1);
+</script>
+</body>
+</html>
