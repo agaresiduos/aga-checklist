@@ -1,0 +1,26 @@
+{
+  "name": "AGA Resíduos — Check List",
+  "short_name": "AGA Check List",
+  "description": "Sistema de vistoria de veículos AGA Resíduos",
+  "start_url": "/aga-checklist/",
+  "scope": "/aga-checklist/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1B6B2F",
+  "theme_color": "#1B6B2F",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

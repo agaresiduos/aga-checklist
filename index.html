@@ -340,6 +340,22 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 #toast.ok{background:var(--g)}
 #toast.err{background:var(--r)}
 </style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1B6B2F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AGA Check List">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-startup-image" href="icons/icon-512.png">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(r => console.log('SW registrado:', r.scope))
+      .catch(e => console.log('SW erro:', e));
+  });
+}
+</script>
 </head>
 <body>
 <div class="shell">
@@ -1115,6 +1131,55 @@ async function mudar(id, novo){
 }
 
 window.addEventListener('DOMContentLoaded',()=>{init();mostrarEtapa(1);});
+</script>
+
+<!-- Banner de instalação PWA -->
+<div id="pwa-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:#fff;border-top:1px solid #E8EAED;padding:14px 16px;
+  box-shadow:0 -4px 20px rgba(0,0,0,.12);max-width:480px;margin:0 auto;
+  align-items:center;gap:12px;">
+  <div style="width:44px;height:44px;background:#1B6B2F;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:Syne,sans-serif;font-weight:800;font-size:20px;color:#fff;flex-shrink:0">A</div>
+  <div style="flex:1">
+    <div style="font-family:Syne,sans-serif;font-size:13px;font-weight:800;color:#111827">Instalar AGA Check List</div>
+    <div style="font-size:11px;color:#6B7280;margin-top:1px">Adicionar à tela inicial como app</div>
+  </div>
+  <button onclick="instalarPWA()" style="padding:8px 16px;background:#1B6B2F;color:#fff;
+    border:none;border-radius:10px;font-family:Inter,sans-serif;font-size:12px;
+    font-weight:700;cursor:pointer;flex-shrink:0">Instalar</button>
+  <button onclick="document.getElementById('pwa-banner').style.display='none'" 
+    style="width:28px;height:28px;border:none;background:#F7F8FA;border-radius:50%;
+    font-size:14px;cursor:pointer;flex-shrink:0;color:#6B7280">✕</button>
+</div>
+<script>
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('pwa-banner');
+  if (banner) {
+    banner.style.display = 'flex';
+  }
+});
+
+function instalarPWA() {
+  const banner = document.getElementById('pwa-banner');
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(choice => {
+    if (choice.outcome === 'accepted') {
+      if (banner) banner.style.display = 'none';
+    }
+    deferredPrompt = null;
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  const banner = document.getElementById('pwa-banner');
+  if (banner) banner.style.display = 'none';
+  deferredPrompt = null;
+});
 </script>
 </body>
 </html>
