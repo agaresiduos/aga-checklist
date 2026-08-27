@@ -2,1184 +2,708 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Check List — AGA Resíduos</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --g:#1B6B2F;--gm:#2E8B57;--gc:#d4edda;--gx:#f0faf3;
-  --r:#dc2626;--rc:#fef2f2;
-  --y:#d97706;--yc:#fffbeb;
-  --bg:#F7F8FA;--card:#fff;--brd:#E8EAED;
-  --txt:#111827;--sub:#6B7280;
-  --r8:12px;--r16:20px;
-  --sh:0 2px 12px rgba(0,0,0,.07);
-  --shm:0 4px 24px rgba(0,0,0,.12);
-}
-html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',sans-serif;color:var(--txt);-webkit-font-smoothing:antialiased}
-
-/* ── APP SHELL ── */
-.shell{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:480px;margin:0 auto;position:relative;overflow:hidden}
-
-/* ── TOPBAR ── */
-.topbar{background:var(--g);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;flex-shrink:0;box-shadow:0 2px 8px rgba(27,107,47,.3)}
-.brand{display:flex;align-items:center;gap:8px}
-.brand-logo{width:28px;height:28px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:var(--g);font-family:'Syne',sans-serif}
-.brand-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.2px}
-.tabs-top{display:flex;gap:3px;background:rgba(255,255,255,.15);border-radius:20px;padding:3px}
-.tab-top{padding:5px 14px;border-radius:16px;border:none;background:transparent;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
-.tab-top.on{background:#fff;color:var(--g)}
-
-/* ── SCROLLABLE CONTENT ── */
-.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
-.content::-webkit-scrollbar{display:none}
-
-/* ── VIEWS ── */
-.view{display:none;min-height:100%}
-.view.on{display:block}
-
-/* ══════════════════════════════
-   FORMULÁRIO — ETAPAS
-══════════════════════════════ */
-.etapa{display:none;padding:24px 16px 100px;min-height:100%}
-.etapa.on{display:block}
-
-/* Indicador de etapa */
-.step-indicator{display:flex;align-items:center;gap:8px;margin-bottom:24px}
-.step-dot{width:8px;height:8px;border-radius:50%;background:var(--brd);transition:all .3s}
-.step-dot.on{width:24px;border-radius:4px;background:var(--g)}
-.step-dot.done{background:var(--gc)}
-.step-label{font-size:11px;font-weight:600;color:var(--sub);margin-left:4px;text-transform:uppercase;letter-spacing:.6px}
-
-/* ── ETAPA 1 — Identificação ── */
-.etapa-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--txt);margin-bottom:6px;line-height:1.2}
-.etapa-sub{font-size:13px;color:var(--sub);margin-bottom:28px;line-height:1.5}
-
-.field-group{display:flex;flex-direction:column;gap:14px;margin-bottom:28px}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--sub)}
-.field select,.field input{
-  width:100%;padding:14px 16px;
-  border:2px solid var(--brd);border-radius:var(--r8);
-  font-family:'Inter',sans-serif;font-size:15px;
-  color:var(--txt);background:var(--card);
-  outline:none;transition:border-color .15s;
-  -webkit-appearance:none;appearance:none;
-}
-.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
-.field select:focus,.field input:focus{border-color:var(--g)}
-.field input::placeholder{color:#C0C4CC}
-
-/* ── ETAPA 2 — Psicossocial ── */
-.psico-pergunta{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;line-height:1.3;margin-bottom:8px}
-.psico-context{font-size:13px;color:var(--sub);margin-bottom:32px;line-height:1.5;padding:12px;background:var(--gx);border-radius:var(--r8);border-left:3px solid var(--g)}
-
-.psico-opts{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
-.psico-opt{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:var(--r16);border:2px solid var(--brd);background:var(--card);cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.psico-opt input{display:none}
-.psico-emoji{font-size:36px;flex-shrink:0;line-height:1}
-.psico-texts{flex:1}
-.psico-opt-title{font-size:15px;font-weight:700;color:var(--txt);display:block;margin-bottom:2px}
-.psico-opt-desc{font-size:12px;color:var(--sub);display:block;line-height:1.4}
-.psico-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--brd);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:12px}
-
-.psico-opt.sel-bem{border-color:var(--g);background:var(--gx)}
-.psico-opt.sel-bem .psico-check{background:var(--g);border-color:var(--g);color:#fff}
-.psico-opt.sel-bem .psico-opt-title{color:var(--g)}
-.psico-opt.sel-normal{border-color:var(--y);background:var(--yc)}
-.psico-opt.sel-normal .psico-check{background:var(--y);border-color:var(--y);color:#fff}
-.psico-opt.sel-normal .psico-opt-title{color:var(--y)}
-.psico-opt.sel-indisposto{border-color:var(--r);background:var(--rc)}
-.psico-opt.sel-indisposto .psico-check{background:var(--r);border-color:var(--r);color:#fff}
-.psico-opt.sel-indisposto .psico-opt-title{color:var(--r)}
-
-/* Alerta indisposto */
-.alerta-indisposto{display:none;background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:var(--r8);padding:14px 16px;margin-top:16px;margin-bottom:4px}
-.alerta-indisposto.show{display:block}
-.alerta-indisposto p{font-size:13px;color:#92400E;line-height:1.5;font-weight:500}
-
-/* ── ETAPA 3 — Checklist ── */
-/* Progresso */
-.prog-header{margin-bottom:20px}
-.prog-cat-label{font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
-.prog-bar-wrap{height:6px;background:var(--brd);border-radius:3px;overflow:hidden;margin-bottom:6px}
-.prog-bar{height:100%;background:linear-gradient(90deg,var(--gm),var(--g));border-radius:3px;transition:width .4s ease}
-.prog-nums{display:flex;justify-content:space-between;align-items:center}
-.prog-txt{font-size:11px;color:var(--sub)}
-.falha-pill{background:var(--rc);color:var(--r);font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;display:none}
-.falha-pill.on{display:block}
-
-/* Categoria nav */
-.cat-nav{display:flex;align-items:center;gap:8px;margin-bottom:20px}
-.cat-nav-icon{width:40px;height:40px;background:var(--g);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.cat-nav-info{flex:1}
-.cat-nav-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--txt)}
-.cat-nav-count{font-size:11px;color:var(--sub)}
-
-/* Itens do checklist — cards grandes */
-.items-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
-.item-card{
-  background:var(--card);border-radius:var(--r8);
-  border:2px solid var(--brd);
-  padding:0;overflow:hidden;
-  transition:all .2s;
-  cursor:pointer;
-  -webkit-user-select:none;user-select:none;
-}
-.item-card:active{transform:scale(.98)}
-.item-card.ok{border-color:var(--g);background:var(--gx)}
-.item-card.falha{border-color:var(--r);background:var(--rc)}
-
-.item-card-main{display:flex;align-items:center;gap:14px;padding:16px}
-.item-num{
-  width:32px;height:32px;border-radius:50%;
-  background:var(--bg);border:1.5px solid var(--brd);
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;color:var(--sub);
-  flex-shrink:0;transition:all .2s;
-}
-.item-card.ok .item-num{background:var(--g);border-color:var(--g);color:#fff}
-.item-card.falha .item-num{background:var(--r);border-color:var(--r);color:#fff}
-.item-text{flex:1;font-size:14px;line-height:1.45;color:var(--txt);font-weight:500}
-.item-card.ok .item-text{color:var(--g)}
-.item-card.falha .item-text{color:var(--r)}
-
-/* Botões OK/FALHA dentro do card */
-.item-btns{display:flex;border-top:1.5px solid var(--brd);overflow:hidden}
-.item-card.ok .item-btns{border-top-color:var(--gc)}
-.item-card.falha .item-btns{border-top-color:#fecaca}
-.ibtn{
-  flex:1;padding:12px;border:none;background:transparent;
-  font-family:'Inter',sans-serif;font-size:13px;font-weight:700;
-  color:var(--sub);cursor:pointer;transition:all .15s;
-  text-transform:uppercase;letter-spacing:.4px;
-}
-.ibtn:first-child{border-right:1.5px solid var(--brd)}
-.item-card.ok .ibtn:first-child{border-right-color:var(--gc)}
-.item-card.falha .ibtn:first-child{border-right-color:#fecaca}
-.ibtn.sel-ok{background:var(--g);color:#fff}
-.ibtn.sel-falha{background:var(--r);color:#fff}
-.ibtn:not(.sel-ok):not(.sel-falha):hover{background:var(--bg)}
-
-/* Campo observação */
-.item-obs{display:none;padding:0 16px 14px}
-.item-obs.show{display:block}
-.item-obs input{
-  width:100%;padding:10px 12px;
-  border:1.5px solid #fca5a5;border-radius:8px;
-  font-size:13px;font-family:'Inter',sans-serif;
-  background:#fff;outline:none;color:var(--txt);
-}
-.item-obs input:focus{border-color:var(--r)}
-.item-obs input::placeholder{color:#d1d5db}
-
-/* Nav entre categorias */
-.cat-nav-btns{display:flex;gap:10px;margin-top:4px}
-.btn-cat-prev{
-  padding:13px 20px;border-radius:var(--r8);
-  border:2px solid var(--brd);background:var(--card);
-  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
-  color:var(--sub);cursor:pointer;transition:all .2s;
-  flex-shrink:0;
-}
-.btn-cat-next{
-  flex:1;padding:13px;border-radius:var(--r8);
-  border:none;background:var(--g);
-  font-family:'Syne',sans-serif;font-size:14px;font-weight:800;
-  color:#fff;cursor:pointer;transition:all .2s;
-  box-shadow:0 4px 16px rgba(27,107,47,.3);
-}
-.btn-cat-next:active{transform:scale(.97)}
-.btn-cat-prev:active{transform:scale(.97)}
-
-/* Seção Outros */
-.outros-card{background:var(--card);border-radius:var(--r8);border:2px dashed var(--brd);padding:16px;margin-bottom:8px}
-.outros-card .outro-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.outros-card .outro-row:last-child{margin-bottom:0}
-.outro-num{width:28px;height:28px;border-radius:50%;background:var(--gx);border:1.5px solid var(--gc);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--g);flex-shrink:0}
-.outro-input{flex:1;padding:10px 12px;border:1.5px solid var(--brd);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;background:#fff}
-.outro-input:focus{border-color:var(--g)}
-.outro-tog{display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--brd);flex-shrink:0}
-.outro-tog input{display:none}
-.outro-tog label{padding:8px 10px;font-size:10px;font-weight:700;cursor:pointer;color:var(--sub);text-transform:uppercase;transition:all .15s}
-.outro-tog input[value="OK"]:checked+label{background:var(--g);color:#fff}
-.outro-tog input[value="FALHA"]:checked+label{background:var(--r);color:#fff}
-
-/* ── BOTÃO FIXO ── */
-.bottom-bar{
-  position:fixed;bottom:0;left:0;right:0;
-  padding:12px 16px max(16px, env(safe-area-inset-bottom));
-  background:rgba(247,248,250,.96);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border-top:1px solid var(--brd);
-  display:flex;gap:10px;
-  max-width:480px;margin:0 auto;
-  z-index:50;
-}
-.btn-main{
-  flex:1;padding:16px;border-radius:var(--r16);border:none;
-  background:var(--g);color:#fff;
-  font-family:'Syne',sans-serif;font-size:15px;font-weight:800;
-  cursor:pointer;transition:all .2s;
-  box-shadow:0 4px 20px rgba(27,107,47,.35);
-  letter-spacing:.2px;
-}
-.btn-main:active{transform:scale(.97);box-shadow:none}
-.btn-main:disabled{background:#aaa;box-shadow:none;cursor:not-allowed}
-.btn-back{
-  padding:16px 20px;border-radius:var(--r16);
-  border:2px solid var(--brd);background:var(--card);
-  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
-  color:var(--sub);cursor:pointer;transition:all .2s;flex-shrink:0;
-}
-.btn-back:active{transform:scale(.97)}
-
-/* ── TELA DE SUCESSO ── */
-.sucesso-view{display:none;min-height:100%;align-items:center;justify-content:center;flex-direction:column;padding:40px 24px;text-align:center}
-.sucesso-view.on{display:flex}
-.sucesso-anim{width:88px;height:88px;background:var(--gc);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 24px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
-@keyframes popIn{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
-.sucesso-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--g);margin-bottom:10px}
-.sucesso-sub{font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:32px;max-width:280px;margin-left:auto;margin-right:auto}
-.sucesso-falhas{background:var(--rc);color:var(--r);border-radius:var(--r8);padding:12px 20px;margin-bottom:24px;font-size:13px;font-weight:600;display:none}
-.sucesso-falhas.show{display:block}
-.btn-nova{padding:14px 40px;border-radius:var(--r16);border:none;background:var(--g);color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(27,107,47,.3)}
-
-/* ══════════════════════════════
-   ADMIN
-══════════════════════════════ */
-.admin-view{padding:20px 16px 80px}
-.admin-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:20px}
-
-/* Cards resumo */
-.resumo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-.resumo-card{background:var(--card);border-radius:var(--r8);padding:14px;box-shadow:var(--sh);border-top:3px solid var(--brd);cursor:pointer;transition:all .2s}
-.resumo-card:active{transform:scale(.97)}
-.resumo-card.sel{border-top-color:var(--g)}
-.resumo-placa{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:2px}
-.resumo-desc{font-size:10px;color:var(--sub);margin-bottom:10px}
-.resumo-stats{display:flex;gap:5px}
-.rstat{flex:1;text-align:center;border-radius:6px;padding:5px 2px;font-size:9px;font-weight:700}
-.rstat .rn{display:block;font-size:16px;font-weight:800;line-height:1.2}
-.rstat.p{background:var(--rc);color:var(--r)}
-.rstat.a{background:var(--yc);color:var(--y)}
-.rstat.r{background:var(--gc);color:var(--g)}
-
-/* Filtros admin */
-.filtros-admin{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.fbtn{padding:7px 14px;border-radius:16px;border:1.5px solid var(--brd);background:var(--card);font-size:11px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;color:var(--sub);transition:all .15s;white-space:nowrap}
-.fbtn:active{transform:scale(.95)}
-.fbtn.on{background:var(--txt);border-color:var(--txt);color:#fff}
-.fbtn.todas.on{background:var(--g);border-color:var(--g)}
-.fsel{padding:7px 12px;border-radius:16px;border:1.5px solid var(--brd);font-size:11px;font-family:'Inter',sans-serif;background:var(--card);outline:none;color:var(--txt);-webkit-appearance:none}
-.fsel:focus{border-color:var(--g)}
-
-/* Falha cards admin */
-.falha-cards{display:flex;flex-direction:column;gap:10px}
-.falha-card{background:var(--card);border-radius:var(--r8);box-shadow:var(--sh);overflow:hidden;border-left:4px solid var(--brd)}
-.falha-card.p{border-left-color:var(--r)}
-.falha-card.a{border-left-color:var(--y)}
-.falha-card.r{border-left-color:var(--g)}
-.falha-card.alerta{background:#FFFBEA}
-.fc-top{padding:12px 14px 8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.fc-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.placa-tag{background:var(--txt);color:#fff;padding:3px 8px;border-radius:5px;font-family:'Syne',sans-serif;font-size:10px;font-weight:800;letter-spacing:.5px}
-.fc-dt{font-size:10px;color:var(--sub)}
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;white-space:nowrap}
-.badge.p{background:var(--rc);color:var(--r)}
-.badge.a{background:var(--yc);color:var(--y)}
-.badge.r{background:var(--gc);color:var(--g)}
-.fc-body{padding:0 14px 14px}
-.fc-psico-alert{font-size:11px;color:#92400E;background:#FEF3C7;border-radius:6px;padding:4px 8px;margin-bottom:8px;display:none;font-weight:600}
-.fc-psico-alert.show{display:inline-block}
-.fc-desc{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px}
-.fc-reinc{background:var(--yc);color:var(--y);border-radius:8px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:4px}
-.fc-obs{font-size:12px;color:var(--r);background:var(--rc);padding:5px 10px;border-radius:6px;margin-bottom:8px;display:none}
-.fc-obs.show{display:block}
-.fc-info{font-size:11px;color:var(--sub);margin-bottom:10px}
-.fc-acts{display:flex;gap:8px;flex-wrap:wrap}
-.act{padding:8px 14px;border-radius:10px;border:1.5px solid currentColor;font-size:11px;font-weight:700;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap}
-.act:active{transform:scale(.95)}
-.act.to-a{color:var(--y)}
-.act.to-r{color:var(--g);background:var(--gx);border-color:var(--g)}
-.act.to-p{color:var(--sub)}
-.act:disabled{opacity:.35;cursor:not-allowed}
-
-/* Admin tabela desktop */
-@media(min-width:700px){
-  .shell{max-width:1100px}
-  .falha-cards{display:none}
-  .tbl-wrap{display:block;background:var(--card);border-radius:var(--r8);box-shadow:var(--sh);overflow:hidden}
-  table{width:100%;border-collapse:collapse;font-size:12px}
-  thead tr{background:var(--txt)}
-  thead th{padding:11px 14px;text-align:left;color:rgba(255,255,255,.75);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-  tbody tr{border-bottom:1px solid var(--brd);transition:background .1s}
-  tbody tr:hover{background:var(--gx)}
-  tbody tr:last-child{border-bottom:none}
-  tbody tr.alerta{background:#FFFBEA!important}
-  td{padding:11px 14px;vertical-align:middle}
-  .resumo-grid{grid-template-columns:repeat(3,1fr)}
-}
-@media(min-width:700px){.tbl-wrap{display:block}}
-.tbl-wrap{display:none}
-
-/* Loading / empty */
-.loading-state,.empty-state{text-align:center;padding:48px 24px;color:var(--sub)}
-.loading-state .ico,.empty-state .ico{font-size:40px;margin-bottom:12px}
-.loading-state p,.empty-state p{font-size:13px}
-.spin{display:inline-block;animation:spin 1s linear infinite;font-size:32px;margin-bottom:12px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Toast */
-#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(50px);background:var(--txt);color:#fff;padding:10px 22px;border-radius:24px;font-size:13px;font-weight:500;box-shadow:var(--shm);transition:transform .3s;z-index:999;white-space:nowrap;pointer-events:none}
-#toast.on{transform:translateX(-50%) translateY(0)}
-#toast.ok{background:var(--g)}
-#toast.err{background:var(--r)}
-</style>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1B6B2F">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AGA Check List">
+<meta name="theme-color" content="#1B6B2F">
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="apple-touch-startup-image" href="icon-512.png">
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(r => console.log('SW registrado:', r.scope))
-      .catch(e => console.log('SW erro:', e));
-  });
-}
-</script>
+<title>AGA — Check List</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+:root{--g:#1B6B2F;--gr:#d4edda;--r:#DC2626;--rr:#FEF2F2;--y:#D97706;--yr:#FFFBEB;--bg:#F2F3F5;--w:#fff;--brd:#E2E5EA;--txt:#111827;--sub:#6B7280}
+html,body{height:100%;background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased}
+
+/* SHELL */
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:430px;margin:0 auto;background:var(--bg);overflow:hidden;position:relative}
+
+/* HEADER */
+header{background:var(--g);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.2)}
+.logo{display:flex;align-items:center;gap:8px;color:#fff;font-size:15px;font-weight:700}
+.logo-icon{width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900}
+.htabs{display:flex;gap:2px;background:rgba(0,0,0,.2);border-radius:20px;padding:3px}
+.htab{padding:5px 14px;border-radius:16px;border:none;background:transparent;color:rgba(255,255,255,.65);font-size:12px;font-weight:600;cursor:pointer}
+.htab.on{background:#fff;color:var(--g)}
+
+/* SCROLL AREA */
+#scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+#scroll::-webkit-scrollbar{display:none}
+
+/* VIEWS */
+.view{display:none;padding:20px 16px 120px}
+.view.on{display:block}
+
+/* SCREEN dentro do form */
+.screen{display:none}
+.screen.on{display:block}
+
+/* STEP DOTS */
+.dots{display:flex;gap:6px;align-items:center;margin-bottom:20px}
+.dot{width:8px;height:8px;border-radius:4px;background:var(--brd);transition:.3s}
+.dot.on{width:28px;background:var(--g)}
+.dot.done{background:var(--gr)}
+.dot-lbl{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-left:4px}
+
+/* TÍTULOS */
+h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:6px}
+.sub{font-size:13px;color:var(--sub);line-height:1.5;margin-bottom:24px}
+
+/* CAMPOS */
+.fields{display:flex;flex-direction:column;gap:14px}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--sub)}
+.fld select,.fld input{width:100%;padding:14px 16px;border:2px solid var(--brd);border-radius:12px;font-size:16px;color:var(--txt);background:var(--w);outline:none;-webkit-appearance:none;transition:border-color .15s}
+.fld select:focus,.fld input:focus{border-color:var(--g)}
+.fld input::placeholder{color:#C5C8CD}
+.sel-arrow{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' fill='none'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:42px}
+
+/* PSICO */
+.psico-cards{display:flex;flex-direction:column;gap:10px}
+.pcard{display:flex;align-items:center;gap:14px;padding:16px 18px;border:2px solid var(--brd);border-radius:14px;background:var(--w);cursor:pointer;transition:.15s;-webkit-user-select:none;user-select:none}
+.pcard:active{transform:scale(.97)}
+.pcard.bem.on{border-color:var(--g);background:#F0FAF3}
+.pcard.normal.on{border-color:var(--y);background:var(--yr)}
+.pcard.ruim.on{border-color:var(--r);background:var(--rr)}
+.pcard .pe{font-size:38px;flex-shrink:0;line-height:1}
+.pcard .pt{flex:1}
+.pcard .pt strong{display:block;font-size:15px;font-weight:700;margin-bottom:2px}
+.pcard .pt span{font-size:12px;color:var(--sub);line-height:1.4}
+.pcard .pk{width:22px;height:22px;border-radius:50%;border:2px solid var(--brd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:.15s}
+.pcard.bem.on .pk{background:var(--g);border-color:var(--g);color:#fff}
+.pcard.normal.on .pk{background:var(--y);border-color:var(--y);color:#fff}
+.pcard.ruim.on .pk{background:var(--r);border-color:var(--r);color:#fff}
+.pcard.bem.on .pt strong{color:var(--g)}
+.pcard.normal.on .pt strong{color:var(--y)}
+.pcard.ruim.on .pt strong{color:var(--r)}
+.alerta-ruim{display:none;margin-top:12px;background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:10px;padding:12px 14px;font-size:13px;color:#92400E;line-height:1.5;font-weight:500}
+.alerta-ruim.on{display:block}
+
+/* CHECKLIST */
+.cat-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:12px 14px;background:var(--w);border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.cat-icon{width:36px;height:36px;background:var(--g);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cat-info strong{font-size:15px;font-weight:700;display:block}
+.cat-info span{font-size:11px;color:var(--sub)}
+
+/* PROGRESSO */
+.prog{margin-bottom:16px}
+.prog-bar{height:5px;background:var(--brd);border-radius:3px;overflow:hidden;margin-bottom:5px}
+.prog-fill{height:100%;background:var(--g);border-radius:3px;transition:width .4s}
+.prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--sub)}
+.falhas-tag{background:var(--rr);color:var(--r);font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px}
+
+/* ITEM CARDS */
+.items{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.icard{background:var(--w);border-radius:12px;border:2px solid var(--brd);overflow:hidden;transition:.15s}
+.icard.ok{border-color:var(--g)}
+.icard.falha{border-color:var(--r)}
+.icard-top{display:flex;align-items:center;gap:12px;padding:14px}
+.inum{width:30px;height:30px;border-radius:50%;background:var(--bg);border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--sub);flex-shrink:0;transition:.15s}
+.icard.ok .inum{background:var(--g);border-color:var(--g);color:#fff}
+.icard.falha .inum{background:var(--r);border-color:var(--r);color:#fff}
+.itxt{flex:1;font-size:14px;line-height:1.4;font-weight:500}
+.icard.ok .itxt{color:var(--g)}
+.icard.falha .itxt{color:var(--r)}
+.ibtns{display:flex;border-top:1.5px solid var(--brd)}
+.icard.ok .ibtns{border-top-color:#c3e6cb}
+.icard.falha .ibtns{border-top-color:#fecaca}
+.ibtn{flex:1;padding:11px;border:none;background:transparent;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;text-transform:uppercase;letter-spacing:.3px;transition:.1s}
+.ibtn:first-child{border-right:1.5px solid var(--brd)}
+.icard.ok .ibtn:first-child{border-right-color:#c3e6cb}
+.icard.falha .ibtn:first-child{border-right-color:#fecaca}
+.ibtn.ok{background:var(--g);color:#fff}
+.ibtn.falha{background:var(--r);color:#fff}
+.iobs{display:none;padding:0 14px 12px}
+.iobs.on{display:block}
+.iobs input{width:100%;padding:9px 12px;border:1.5px solid #fca5a5;border-radius:8px;font-size:13px;background:#fff;outline:none}
+.iobs input:focus{border-color:var(--r)}
+.iobs input::placeholder{color:#d1d5db}
+
+/* OUTROS */
+.outros-wrap{margin-top:8px}
+.outros-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--brd)}
+.outros-row:last-child{border-bottom:none}
+.on-num{width:26px;height:26px;border-radius:50%;background:var(--gr);border:1.5px solid #c3e6cb;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--g);flex-shrink:0}
+.on-input{flex:1;padding:9px 10px;border:1.5px solid var(--brd);border-radius:8px;font-size:13px;background:#fff;outline:none}
+.on-input:focus{border-color:var(--g)}
+.on-tog{display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--brd);flex-shrink:0}
+.on-tog input{display:none}
+.on-tog label{padding:7px 9px;font-size:10px;font-weight:700;cursor:pointer;color:var(--sub);text-transform:uppercase}
+.on-tog input[value="OK"]:checked+label{background:var(--g);color:#fff}
+.on-tog input[value="FALHA"]:checked+label{background:var(--r);color:#fff}
+
+/* BOTTOM BAR */
+#bar{position:fixed;bottom:0;left:0;right:0;background:rgba(242,243,245,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--brd);padding:10px 16px max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;max-width:430px;margin:0 auto;z-index:100}
+.btn-back{padding:14px 18px;border-radius:14px;border:2px solid var(--brd);background:var(--w);font-size:14px;font-weight:700;color:var(--sub);cursor:pointer;display:none}
+.btn-back:active{opacity:.7}
+.btn-main{flex:1;padding:15px;border-radius:14px;border:none;background:var(--g);color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(27,107,47,.3);transition:.15s;letter-spacing:.1px}
+.btn-main:active{transform:scale(.97);box-shadow:none}
+.btn-main:disabled{background:#aaa;box-shadow:none}
+
+/* SUCESSO */
+#sucesso{display:none;align-items:center;justify-content:center;flex-direction:column;min-height:70vh;text-align:center;padding:40px 24px}
+#sucesso.on{display:flex}
+.sico{width:80px;height:80px;background:var(--gr);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.stitle{font-size:24px;font-weight:800;color:var(--g);margin-bottom:8px}
+.ssub{font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:24px}
+.sfalhas{background:var(--rr);color:var(--r);border-radius:10px;padding:10px 18px;margin-bottom:20px;font-size:13px;font-weight:600;display:none}
+.sfalhas.on{display:block}
+.btn-nova{padding:13px 36px;border-radius:14px;border:none;background:var(--g);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+
+/* ADMIN */
+.admin-wrap{padding:0}
+.admin-title{font-size:22px;font-weight:800;margin-bottom:16px}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.res-card{background:var(--w);border-radius:12px;padding:14px;border-top:3px solid var(--brd);cursor:pointer;transition:.15s;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.res-card:active{transform:scale(.97)}
+.res-card.sel{border-top-color:var(--g)}
+.res-placa{font-size:16px;font-weight:800;margin-bottom:2px}
+.res-desc{font-size:10px;color:var(--sub);margin-bottom:10px}
+.res-stats{display:flex;gap:5px}
+.rst{flex:1;text-align:center;border-radius:6px;padding:5px 2px;font-size:9px;font-weight:700}
+.rst .rn{display:block;font-size:17px;font-weight:800;line-height:1.2}
+.rst.p{background:var(--rr);color:var(--r)}
+.rst.a{background:var(--yr);color:var(--y)}
+.rst.r{background:var(--gr);color:var(--g)}
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fbtn{padding:6px 13px;border-radius:14px;border:1.5px solid var(--brd);background:var(--w);font-size:11px;font-weight:700;cursor:pointer;color:var(--sub);white-space:nowrap}
+.fbtn:active{opacity:.7}
+.fbtn.on{background:var(--txt);border-color:var(--txt);color:#fff}
+.fbtn.todas.on{background:var(--g);border-color:var(--g)}
+.fsel{padding:6px 12px;border-radius:14px;border:1.5px solid var(--brd);font-size:11px;background:var(--w);outline:none;color:var(--txt);-webkit-appearance:none}
+.fcards{display:flex;flex-direction:column;gap:8px}
+.fcard{background:var(--w);border-radius:12px;border-left:4px solid var(--brd);box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
+.fcard.p{border-left-color:var(--r)}
+.fcard.a{border-left-color:var(--y)}
+.fcard.r{border-left-color:var(--g)}
+.fcard.alerta{background:#FFFBEA}
+.fc-top{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 6px;gap:8px}
+.fc-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ptag{background:var(--txt);color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.4px}
+.fdt{font-size:10px;color:var(--sub)}
+.badge{display:inline-flex;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.badge.p{background:var(--rr);color:var(--r)}
+.badge.a{background:var(--yr);color:var(--y)}
+.badge.r{background:var(--gr);color:var(--g)}
+.fc-body{padding:0 12px 12px}
+.fc-palert{font-size:11px;color:#92400E;background:#FEF3C7;border-radius:6px;padding:3px 8px;margin-bottom:6px;display:none;font-weight:600}
+.fc-palert.on{display:inline-block}
+.fc-desc{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:3px}
+.fc-reinc{background:var(--yr);color:var(--y);border-radius:6px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:3px}
+.fc-obs{font-size:12px;color:var(--r);background:var(--rr);padding:4px 8px;border-radius:6px;margin-bottom:6px;display:none}
+.fc-obs.on{display:block}
+.fc-info{font-size:11px;color:var(--sub);margin-bottom:8px}
+.fc-acts{display:flex;gap:6px;flex-wrap:wrap}
+.act{padding:7px 12px;border-radius:8px;border:1.5px solid currentColor;font-size:11px;font-weight:700;cursor:pointer;background:transparent;white-space:nowrap}
+.act:active{opacity:.7}
+.act:disabled{opacity:.3;cursor:not-allowed}
+.act.a{color:var(--y)}
+.act.r{color:var(--g);background:var(--gr);border-color:var(--g)}
+.act.p{color:var(--sub)}
+.empty{text-align:center;padding:48px 24px;color:var(--sub)}
+.empty .ei{font-size:36px;margin-bottom:10px}
+
+/* PWA BANNER */
+#pwab{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:#fff;border-top:1px solid var(--brd);padding:12px 16px;box-shadow:0 -4px 20px rgba(0,0,0,.1);max-width:430px;margin:0 auto;align-items:center;gap:10px}
+#pwab .pi{width:40px;height:40px;background:var(--g);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0}
+#pwab .pt{flex:1}
+#pwab .pt strong{display:block;font-size:13px;font-weight:700}
+#pwab .pt span{font-size:11px;color:var(--sub)}
+#pwab .pb{padding:8px 14px;background:var(--g);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
+#pwab .px{width:26px;height:26px;border:none;background:var(--bg);border-radius:50%;font-size:13px;cursor:pointer;flex-shrink:0;color:var(--sub)}
+
+#toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--txt);color:#fff;padding:9px 20px;border-radius:20px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:.25s;z-index:999;white-space:nowrap;pointer-events:none;opacity:0}
+#toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+#toast.ok{background:var(--g)}
+#toast.err{background:var(--r)}
+</style>
 </head>
 <body>
-<div class="shell">
-
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="brand">
-    <div class="brand-logo">A</div>
-    <div class="brand-name">AGA Resíduos</div>
-  </div>
-  <div class="tabs-top">
-    <button class="tab-top on" onclick="goView('form')">Vistoria</button>
-    <button class="tab-top" onclick="goView('admin')">Admin</button>
-  </div>
-</div>
-
-<!-- CONTENT -->
-<div class="content" id="content">
-
-  <!-- ══ VIEW FORMULÁRIO ══ -->
-  <div id="view-form" class="view on">
-
-    <!-- Sucesso -->
-    <div class="sucesso-view" id="sucesso">
-      <div class="sucesso-anim">✅</div>
-      <div class="sucesso-title">Vistoria enviada!</div>
-      <div class="sucesso-sub">Registro salvo com sucesso. Falhas encaminhadas automaticamente para o painel.</div>
-      <div class="sucesso-falhas" id="sucesso-falhas"></div>
-      <button class="btn-nova" onclick="resetForm()">Nova Vistoria</button>
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">A</div>
+      AGA Resíduos
     </div>
-
-    <!-- ── ETAPA 1 ── Identificação -->
-    <div id="etapa1" class="etapa on">
-      <div class="step-indicator">
-        <div class="step-dot on" id="dot1"></div>
-        <div class="step-dot" id="dot2"></div>
-        <div class="step-dot" id="dot3"></div>
-        <span class="step-label">Etapa 1 de 3</span>
-      </div>
-
-      <div class="etapa-title">Dados da<br>Vistoria</div>
-      <div class="etapa-sub">Preencha as informações do veículo e do motorista antes de iniciar.</div>
-
-      <div class="field-group">
-        <div class="field">
-          <label>Placa do Veículo *</label>
-          <select id="f-placa">
-            <option value="">Selecione a placa...</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Motorista *</label>
-          <input id="f-motorista" type="text" placeholder="Nome completo" autocomplete="name">
-        </div>
-        <div class="field">
-          <label>KM Atual</label>
-          <input id="f-km" type="number" placeholder="Ex: 85.420" inputmode="numeric">
-        </div>
-        <div class="field">
-          <label>Data *</label>
-          <input id="f-data" type="date">
-        </div>
-      </div>
+    <div class="htabs">
+      <button class="htab on" onclick="goView('form')">Vistoria</button>
+      <button class="htab" onclick="goView('admin')">Admin</button>
     </div>
+  </header>
 
-    <!-- ── ETAPA 2 ── Psicossocial -->
-    <div id="etapa2" class="etapa">
-      <div class="step-indicator">
-        <div class="step-dot done"></div>
-        <div class="step-dot on"></div>
-        <div class="step-dot"></div>
-        <span class="step-label">Etapa 2 de 3</span>
+  <div id="scroll">
+
+    <!-- ══ FORM VIEW ══ -->
+    <div id="vform" class="view on">
+
+      <!-- Sucesso -->
+      <div id="sucesso">
+        <div class="sico">✅</div>
+        <div class="stitle">Vistoria enviada!</div>
+        <div class="ssub">Dados salvos com sucesso.<br>Falhas registradas no painel.</div>
+        <div class="sfalhas" id="sf"></div>
+        <button class="btn-nova" onclick="novo()">Nova Vistoria</button>
       </div>
 
-      <div class="psico-pergunta">Como você está para dirigir hoje?</div>
-      <div class="psico-context">
-        Sua resposta é sigilosa. Ela existe para proteger você, sua equipe e os demais no trânsito. Responda com sinceridade.
-      </div>
-
-      <div class="psico-opts">
-        <label class="psico-opt" id="opt-bem" onclick="selecionarPsico('bem')">
-          <input type="radio" name="psico" value="bem" checked>
-          <span class="psico-emoji">😊</span>
-          <span class="psico-texts">
-            <span class="psico-opt-title">Bem e disposto</span>
-            <span class="psico-opt-desc">Descansado, focado, pronto para dirigir com segurança</span>
-          </span>
-          <span class="psico-check" id="chk-bem">✓</span>
-        </label>
-
-        <label class="psico-opt" id="opt-normal" onclick="selecionarPsico('normal')">
-          <input type="radio" name="psico" value="normal">
-          <span class="psico-emoji">😐</span>
-          <span class="psico-texts">
-            <span class="psico-opt-title">Normal / Razoável</span>
-            <span class="psico-opt-desc">Sem impedimentos, mas sem estar no meu melhor dia</span>
-          </span>
-          <span class="psico-check" id="chk-normal"></span>
-        </label>
-
-        <label class="psico-opt" id="opt-indisposto" onclick="selecionarPsico('indisposto')">
-          <input type="radio" name="psico" value="indisposto">
-          <span class="psico-emoji">😴</span>
-          <span class="psico-texts">
-            <span class="psico-opt-title">Cansado / Indisposto</span>
-            <span class="psico-opt-desc">Com sono, doente ou algo que pode afetar minha direção</span>
-          </span>
-          <span class="psico-check" id="chk-indisposto"></span>
-        </label>
-      </div>
-
-      <div class="alerta-indisposto" id="alerta-indisposto">
-        <p>⚠️ <strong>Atenção.</strong> Sua resposta foi registrada e o gestor será notificado. Se possível, comunique a situação antes de sair. Sua segurança e a dos outros é prioridade.</p>
-      </div>
-    </div>
-
-    <!-- ── ETAPA 3 ── Checklist -->
-    <div id="etapa3" class="etapa">
-      <div class="step-indicator">
-        <div class="step-dot done"></div>
-        <div class="step-dot done"></div>
-        <div class="step-dot on"></div>
-        <span class="step-label">Etapa 3 de 3</span>
-      </div>
-
-      <!-- Progresso geral -->
-      <div class="prog-header">
-        <div class="prog-cat-label" id="prog-cat-label">Carregando...</div>
-        <div class="prog-bar-wrap">
-          <div class="prog-bar" id="prog-bar" style="width:0%"></div>
+      <!-- ETAPA 1 -->
+      <div class="screen on" id="s1">
+        <div class="dots">
+          <div class="dot on" id="d1"></div>
+          <div class="dot" id="d2"></div>
+          <div class="dot" id="d3"></div>
+          <span class="dot-lbl">Etapa 1 de 3</span>
         </div>
-        <div class="prog-nums">
-          <span class="prog-txt" id="prog-txt">0 de 44 itens</span>
-          <span class="falha-pill" id="falha-pill">0 falhas</span>
-        </div>
-      </div>
-
-      <!-- Navegador de categoria -->
-      <div class="cat-nav">
-        <div class="cat-nav-icon" id="cat-icon">📋</div>
-        <div class="cat-nav-info">
-          <div class="cat-nav-name" id="cat-name">Categoria</div>
-          <div class="cat-nav-count" id="cat-count"></div>
-        </div>
-      </div>
-
-      <!-- Itens da categoria atual -->
-      <div class="items-list" id="items-list"></div>
-
-      <!-- Seção outros (só na última cat) -->
-      <div id="outros-section" style="display:none">
-        <div class="cat-nav" style="margin-top:16px">
-          <div class="cat-nav-icon">📝</div>
-          <div class="cat-nav-info">
-            <div class="cat-nav-name">Outros — Não Listados</div>
-            <div class="cat-nav-count">Itens adicionais não previstos acima</div>
+        <h1>Dados da<br>Vistoria</h1>
+        <p class="sub">Informe o veículo e o motorista para iniciar.</p>
+        <div class="fields">
+          <div class="fld">
+            <label>Placa do Veículo *</label>
+            <select id="fp" class="sel-arrow">
+              <option value="">Selecione...</option>
+              <option value="ITZ5A45">ITZ5A45 — Caminhão Tanque</option>
+              <option value="JPX8D88">JPX8D88 — Caminhão Sider</option>
+              <option value="KZI6194">KZI6194 — Compactador</option>
+            </select>
+          </div>
+          <div class="fld">
+            <label>Motorista *</label>
+            <input id="fm" type="text" placeholder="Nome completo" autocomplete="name">
+          </div>
+          <div class="fld">
+            <label>KM Atual</label>
+            <input id="fk" type="number" placeholder="Ex: 85420" inputmode="numeric">
+          </div>
+          <div class="fld">
+            <label>Data *</label>
+            <input id="fd" type="date">
           </div>
         </div>
-        <div class="outros-card" id="outros-card"></div>
       </div>
 
-      <!-- Navegação entre categorias -->
-      <div class="cat-nav-btns" id="cat-nav-btns">
-        <button class="btn-cat-prev" id="btn-prev" onclick="catAnterior()">←</button>
-        <button class="btn-cat-next" id="btn-next" onclick="proximaCat()">Próxima categoria →</button>
+      <!-- ETAPA 2 -->
+      <div class="screen" id="s2">
+        <div class="dots">
+          <div class="dot done"></div>
+          <div class="dot on"></div>
+          <div class="dot"></div>
+          <span class="dot-lbl">Etapa 2 de 3</span>
+        </div>
+        <h1>Como você está<br>para dirigir hoje?</h1>
+        <p class="sub" style="background:#F0FAF3;border-left:3px solid var(--g);padding:10px 12px;border-radius:8px;margin-bottom:24px">
+          Resposta sigilosa. Existe para proteger você e todos no trânsito. Seja honesto.
+        </p>
+        <div class="psico-cards">
+          <div class="pcard bem on" id="pc-bem" onclick="selPsico('bem')">
+            <span class="pe">😊</span>
+            <div class="pt"><strong>Bem e disposto</strong><span>Descansado, focado, pronto para dirigir com segurança</span></div>
+            <div class="pk" id="pk-bem">✓</div>
+          </div>
+          <div class="pcard normal" id="pc-normal" onclick="selPsico('normal')">
+            <span class="pe">😐</span>
+            <div class="pt"><strong>Normal / Razoável</strong><span>Sem impedimentos, mas não no meu melhor dia</span></div>
+            <div class="pk" id="pk-normal"></div>
+          </div>
+          <div class="pcard ruim" id="pc-ruim" onclick="selPsico('indisposto')">
+            <span class="pe">😴</span>
+            <div class="pt"><strong>Cansado / Indisposto</strong><span>Com sono, doente ou algo que pode afetar minha direção</span></div>
+            <div class="pk" id="pk-ruim"></div>
+          </div>
+        </div>
+        <div class="alerta-ruim" id="alerta-ruim">
+          ⚠️ <strong>Sua resposta foi registrada.</strong> O gestor será notificado. Comunique a situação antes de sair. Sua segurança é prioridade.
+        </div>
+      </div>
+
+      <!-- ETAPA 3 -->
+      <div class="screen" id="s3">
+        <div class="dots">
+          <div class="dot done"></div>
+          <div class="dot done"></div>
+          <div class="dot on"></div>
+          <span class="dot-lbl">Etapa 3 de 3</span>
+        </div>
+        <div class="prog">
+          <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+          <div class="prog-lbl">
+            <span id="ptxt">0 de 44 itens</span>
+            <span class="falhas-tag" id="ftag" style="display:none">0 falhas</span>
+          </div>
+        </div>
+        <div class="cat-hdr">
+          <div class="cat-icon" id="ci">📋</div>
+          <div class="cat-info">
+            <strong id="cn">Categoria</strong>
+            <span id="cc"></span>
+          </div>
+        </div>
+        <div class="items" id="ilist"></div>
+        <div id="outros-s" style="display:none">
+          <div class="cat-hdr" style="margin-top:4px">
+            <div class="cat-icon">📝</div>
+            <div class="cat-info"><strong>Outros</strong><span>Itens não listados acima</span></div>
+          </div>
+          <div class="outros-wrap" id="outros-w"></div>
+        </div>
+      </div>
+
+    </div><!-- /vform -->
+
+    <!-- ══ ADMIN VIEW ══ -->
+    <div id="vadmin" class="view">
+      <div class="admin-wrap">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div class="admin-title">Manutenção</div>
+          <button class="fbtn" onclick="loadAdmin()" style="font-size:12px">↻ Atualizar</button>
+        </div>
+        <div class="res-grid" id="rgrid"></div>
+        <div class="filtros" id="pbtns"></div>
+        <div class="filtros" style="margin-top:-4px">
+          <select class="fsel" id="fst" onchange="filtrar()">
+            <option value="">Todos status</option>
+            <option value="PENDENTE">🔴 Pendente</option>
+            <option value="EM_ANDAMENTO">🟡 Andamento</option>
+            <option value="RESOLVIDO">🟢 Resolvido</option>
+          </select>
+          <select class="fsel" id="fcat" onchange="filtrar()">
+            <option value="">Todas cats.</option>
+          </select>
+          <select class="fsel" id="fps" onchange="filtrar()">
+            <option value="">Todos</option>
+            <option value="indisposto">⚠️ Indispostos</option>
+          </select>
+        </div>
+        <div class="fcards" id="fcards">
+          <div class="empty"><div class="ei">⏳</div><p>Carregando...</p></div>
+        </div>
       </div>
     </div>
 
-  </div><!-- /view-form -->
+  </div><!-- /scroll -->
+</div><!-- /app -->
 
-  <!-- ══ VIEW ADMIN ══ -->
-  <div id="view-admin" class="view">
-    <div class="admin-view">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <div class="admin-title">Painel de<br>Manutenção</div>
-        <button class="fbtn" onclick="carregarAdmin()" style="font-size:13px">↻ Atualizar</button>
-      </div>
+<!-- Bottom bar -->
+<div id="bar">
+  <button class="btn-back" id="bb" onclick="back()">←</button>
+  <button class="btn-main" id="bm" onclick="next()">Próximo →</button>
+</div>
 
-      <div class="resumo-grid" id="resumo-grid"></div>
-
-      <div class="filtros-admin" id="placa-btns"></div>
-      <div class="filtros-admin" style="margin-top:-6px">
-        <select class="fsel" id="f-status" onchange="filtrar()">
-          <option value="">Todos os status</option>
-          <option value="PENDENTE">🔴 Pendente</option>
-          <option value="EM_ANDAMENTO">🟡 Andamento</option>
-          <option value="RESOLVIDO">🟢 Resolvido</option>
-        </select>
-        <select class="fsel" id="f-cat-admin" onchange="filtrar()">
-          <option value="">Todas cats.</option>
-        </select>
-        <select class="fsel" id="f-psico-admin" onchange="filtrar()">
-          <option value="">Todos</option>
-          <option value="indisposto">⚠️ Indispostos</option>
-        </select>
-      </div>
-
-      <div class="falha-cards" id="falha-cards">
-        <div class="loading-state"><div class="spin">⏳</div><p>Carregando...</p></div>
-      </div>
-
-      <div class="tbl-wrap" id="tbl-wrap">
-        <div class="loading-state"><div class="spin">⏳</div><p>Carregando...</p></div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /content -->
-</div><!-- /shell -->
-
-<!-- Bottom bar (form only) -->
-<div class="bottom-bar" id="bottom-bar">
-  <button class="btn-back" id="btn-back" onclick="voltarEtapa()" style="display:none">←</button>
-  <button class="btn-main" id="btn-main" onclick="avancarEtapa()">Próximo →</button>
+<!-- PWA banner -->
+<div id="pwab">
+  <div class="pi">A</div>
+  <div class="pt"><strong>Instalar AGA Check List</strong><span>Adicionar à tela inicial</span></div>
+  <button class="pb" onclick="installPWA()">Instalar</button>
+  <button class="px" onclick="this.closest('#pwab').style.display='none'">✕</button>
 </div>
 
 <div id="toast"></div>
 
 <script>
-const SB_URL = 'https://wrjxntsljzanxxvkmzps.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyanhudHNsanphbnh4dmttenBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODk3NjYsImV4cCI6MjA4OTg2NTc2Nn0.xtgRoDU4nQMTSE2hMhFG2bGmMtAG8JabvF3KnP2Hleo';
-
-const FROTA = [
-  {placa:'ITZ5A45',descricao:'Caminhão Tanque'},
-  {placa:'JPX8D88',descricao:'Caminhão Sider'},
-  {placa:'KZI6194',descricao:'Compactador'},
+const SB='https://wrjxntsljzanxxvkmzps.supabase.co',SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyanhudHNsanphbnh4dmttenBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODk3NjYsImV4cCI6MjA4OTg2NTc2Nn0.xtgRoDU4nQMTSE2hMhFG2bGmMtAG8JabvF3KnP2Hleo';
+const FROTA=[{p:'ITZ5A45',d:'Caminhão Tanque'},{p:'JPX8D88',d:'Caminhão Sider'},{p:'KZI6194',d:'Compactador'}];
+const CL=[
+  {c:'Documentação',i:'📋',it:[{n:1,t:'Documentos do veículo e licenças estão no veículo?'},{n:2,t:'Quilometragem conferida e anotada?'}]},
+  {c:'Sistema Elétrico',i:'💡',it:[{n:3,t:'Buzina funcionando?'},{n:4,t:'Para-brisa e limpador em perfeito estado?'},{n:5,t:'Esguicho de água do limpador funcionando?'},{n:6,t:'Luz interna funcionando?'},{n:7,t:'Luz do painel funcionando?'},{n:8,t:'Farol alto funcionando?'},{n:9,t:'Farol baixo funcionando?'},{n:10,t:'Luz de marcha ré funcionando?'},{n:11,t:'Pisca alerta / pisca-pisca funcionando?'},{n:12,t:'Lanternas e setas funcionando?'},{n:13,t:'Luz de freio funcionando?'},{n:14,t:'Luz de placa funcionando?'}]},
+  {c:'Motor e Fluidos',i:'🔩',it:[{n:15,t:'Nível de óleo do motor adequado?'},{n:16,t:'Nível do fluido de freio adequado?'},{n:17,t:'Água do radiador em nível adequado?'},{n:18,t:'Vazamentos de óleo aparentes?'}]},
+  {c:'Pneus e Rodas',i:'🛞',it:[{n:19,t:'Condições gerais dos pneus (sulcos, danos, calibragem)?'},{n:20,t:'Macaco e chave de roda disponíveis no veículo?'}]},
+  {c:'Equipamentos',i:'🔧',it:[{n:21,t:'Tacógrafo funcionando?'},{n:22,t:'Termômetro funcionando?'},{n:23,t:'Mangueiras e conexões de engate e sucção em condições de uso?'},{n:24,t:'Ferramentas operacionais disponíveis (pás, enxadas, vassouras)?'}]},
+  {c:'Segurança',i:'🛡️',it:[{n:25,t:'Cinto de segurança em condições de uso?'},{n:26,t:'Triângulo de sinalização disponível no veículo?'},{n:27,t:'Retrovisores internos e externos em bom estado?'},{n:28,t:'Identificação de proibição de celular no painel?'},{n:29,t:'Freio de serviço funcionando?'},{n:30,t:'Freio de estacionamento funcionando?'},{n:31,t:'Proteção de todas as partes móveis?'},{n:32,t:'Fitas refletivas nos lados externos?'},{n:33,t:'Controle de emissão de gases (Ringelmann)?'},{n:34,t:'Calço disponível no veículo?'},{n:35,t:'Alerta sonoro de marcha ré funcionando?'},{n:36,t:'Kit de EPIs disponível (luvas, uniforme, respirador)?'},{n:37,t:'Escada de acesso e corrimão em bom estado?'}]},
+  {c:'Emergência',i:'🧯',it:[{n:38,t:'Extintor de incêndio dentro da validade?'}]},
+  {c:'Estrutura',i:'🚛',it:[{n:39,t:'Portas com maçanetas e trincos em bom estado?'},{n:40,t:'Estado geral da lataria e carroceria?'},{n:41,t:'Sistema de climatização funcionando?'},{n:42,t:'Limpeza do veículo e assentos em boas condições?'},{n:43,t:'Logotipo da empresa e numeração visíveis?'},{n:44,t:'Sinalização e identificação da empresa em bom estado?'}]}
 ];
-
-const CHECKLIST = [
-  {cat:'Documentação', icon:'📋', itens:[
-    {n:1, desc:'Documentos do veículo e licenças estão no veículo?'},
-    {n:2, desc:'Quilometragem conferida e anotada?'},
-  ]},
-  {cat:'Sistema Elétrico', icon:'💡', itens:[
-    {n:3,  desc:'Buzina funcionando?'},
-    {n:4,  desc:'Para-brisa e limpador em perfeito estado?'},
-    {n:5,  desc:'Esguicho de água do limpador funcionando?'},
-    {n:6,  desc:'Luz interna funcionando?'},
-    {n:7,  desc:'Luz do painel funcionando?'},
-    {n:8,  desc:'Farol alto funcionando?'},
-    {n:9,  desc:'Farol baixo funcionando?'},
-    {n:10, desc:'Luz de marcha ré funcionando?'},
-    {n:11, desc:'Pisca alerta / pisca-pisca funcionando?'},
-    {n:12, desc:'Lanternas e setas funcionando?'},
-    {n:13, desc:'Luz de freio funcionando?'},
-    {n:14, desc:'Luz de placa funcionando?'},
-  ]},
-  {cat:'Motor e Fluidos', icon:'🔩', itens:[
-    {n:15, desc:'Nível de óleo do motor adequado?'},
-    {n:16, desc:'Nível do fluido de freio adequado?'},
-    {n:17, desc:'Água do radiador em nível adequado?'},
-    {n:18, desc:'Vazamentos de óleo aparentes?'},
-  ]},
-  {cat:'Pneus e Rodas', icon:'🛞', itens:[
-    {n:19, desc:'Condições gerais dos pneus (sulcos, danos, calibragem)?'},
-    {n:20, desc:'Macaco e chave de roda disponíveis no veículo?'},
-  ]},
-  {cat:'Instrumentos e Equipamentos', icon:'🔧', itens:[
-    {n:21, desc:'Tacógrafo funcionando?'},
-    {n:22, desc:'Termômetro funcionando?'},
-    {n:23, desc:'Mangueiras e conexões de engate e sucção em condições de uso?'},
-    {n:24, desc:'Ferramentas operacionais disponíveis (pás, enxadas, vassouras)?'},
-  ]},
-  {cat:'Segurança', icon:'🛡️', itens:[
-    {n:25, desc:'Cinto de segurança em condições de uso?'},
-    {n:26, desc:'Triângulo de sinalização disponível no veículo?'},
-    {n:27, desc:'Retrovisores internos e externos em bom estado?'},
-    {n:28, desc:'Identificação de proibição de celular no painel?'},
-    {n:29, desc:'Freio de serviço funcionando?'},
-    {n:30, desc:'Freio de estacionamento funcionando?'},
-    {n:31, desc:'Proteção de todas as partes móveis?'},
-    {n:32, desc:'Fitas refletivas nos lados externos?'},
-    {n:33, desc:'Controle de emissão de gases (Ringelmann)?'},
-    {n:34, desc:'Calço disponível no veículo?'},
-    {n:35, desc:'Alerta sonoro de marcha ré funcionando?'},
-    {n:36, desc:'Kit de EPIs disponível (luvas, uniforme, respirador)?'},
-    {n:37, desc:'Escada de acesso e corrimão em bom estado?'},
-  ]},
-  {cat:'Emergência', icon:'🧯', itens:[
-    {n:38, desc:'Extintor de incêndio dentro da validade?'},
-  ]},
-  {cat:'Estrutura', icon:'🚛', itens:[
-    {n:39, desc:'Portas com maçanetas e trincos em bom estado?'},
-    {n:40, desc:'Estado geral da lataria e carroceria?'},
-    {n:41, desc:'Sistema de climatização funcionando?'},
-    {n:42, desc:'Limpeza do veículo e assentos em boas condições?'},
-    {n:43, desc:'Logotipo da empresa e numeração visíveis?'},
-    {n:44, desc:'Sinalização e identificação da empresa em bom estado?'},
-  ]},
-];
-
-const TOTAL = CHECKLIST.reduce((s,c)=>s+c.itens.length,0);
+const TOTAL=CL.reduce((s,c)=>s+c.it.length,0);
 
 // Estado
-let etapaAtual = 1;
-let catAtual = 0;
-let respostas = {}; // {n: 'OK'|'FALHA'}
-let observacoes = {}; // {n: texto}
-let psicoSel = 'bem';
+let etapa=1,cat=0,resp={},obs={},psico='bem';
 
-// ── Utils ──
-function toast(msg, tipo='ok') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'on ' + tipo;
-  setTimeout(()=>t.className='', 3000);
-}
+// Utils
+function toast(m,t='ok'){const el=document.getElementById('toast');el.textContent=m;el.className='on '+t;clearTimeout(el._t);el._t=setTimeout(()=>el.className='',2800)}
 
-async function sb(path, opts={}) {
-  const r = await fetch(SB_URL+'/rest/v1/'+path, {
-    headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
-      'Content-Type':'application/json','Prefer':opts.prefer||'return=representation',...(opts.headers||{})},
-    method: opts.method||'GET',
-    body: opts.body ? JSON.stringify(opts.body) : undefined,
+async function api(path,opts={}){
+  const r=await fetch(SB+'/rest/v1/'+path,{
+    headers:{apikey:SK,Authorization:'Bearer '+SK,'Content-Type':'application/json',Prefer:opts.prefer||'return=representation',...(opts.h||{})},
+    method:opts.method||'GET',body:opts.body?JSON.stringify(opts.body):undefined
   });
-  if(!r.ok){const e=await r.text();throw new Error('HTTP '+r.status+': '+e);}
+  if(!r.ok){const e=await r.text();throw new Error('HTTP '+r.status+': '+e)}
   if(r.status===204)return null;
   return r.json();
 }
 
-// ── Init ──
-function init() {
-  const sel = document.getElementById('f-placa');
-  FROTA.forEach(v=>{
-    const o=document.createElement('option');
-    o.value=v.placa; o.textContent=v.placa+' — '+v.descricao;
-    sel.appendChild(o);
-  });
-  document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
-  selecionarPsico('bem');
-  respostas={}; observacoes={}; catAtual=0;
-  renderCat(0);
-}
-
-// ── Views ──
-function goView(v) {
+// Views
+function goView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('on'));
-  document.querySelectorAll('.tab-top').forEach((b,i)=>b.classList.toggle('on',(i===0&&v==='form')||(i===1&&v==='admin')));
-  document.getElementById('view-'+v).classList.add('on');
-  document.getElementById('bottom-bar').style.display = v==='form' ? 'flex' : 'none';
-  if(v==='admin') carregarAdmin();
+  document.querySelectorAll('.htab').forEach((b,i)=>b.classList.toggle('on',(i===0&&v==='form')||(i===1&&v==='admin')));
+  document.getElementById('v'+v).classList.add('on');
+  document.getElementById('bar').style.display=v==='form'?'flex':'none';
+  if(v==='admin')loadAdmin();
 }
 
-// ── Etapas ──
-function mostrarEtapa(n) {
-  document.querySelectorAll('.etapa').forEach(el=>el.classList.remove('on'));
-  document.getElementById('etapa'+n).classList.add('on');
-  document.getElementById('content').scrollTo(0,0);
-  etapaAtual = n;
-  const back = document.getElementById('btn-back');
-  back.style.display = n>1 ? 'block' : 'none';
-  const main = document.getElementById('btn-main');
-  if(n===3) {
-    atualizarBtnChecklist();
-  } else {
-    main.textContent = n===1 ? 'Próximo →' : 'Iniciar Vistoria →';
-    main.disabled = false;
+// Etapas
+function showEtapa(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s'+n).classList.add('on');
+  document.getElementById('scroll').scrollTo(0,0);
+  etapa=n;
+  const bb=document.getElementById('bb');
+  bb.style.display=n>1?'block':'none';
+  updBtn();
+}
+
+function updBtn(){
+  const bm=document.getElementById('bm');
+  if(etapa===1){bm.textContent='Próximo →';bm.onclick=next}
+  else if(etapa===2){bm.textContent='Iniciar Vistoria →';bm.onclick=next}
+  else{
+    const isLast=cat===CL.length-1;
+    bm.textContent=isLast?'✓ Enviar Vistoria':'Próxima Categoria →';
+    bm.onclick=isLast?enviar:nextCat;
+    bm.style.background=isLast?'#1B6B2F':'#2E8B57';
+  }
+  bm.disabled=false;
+}
+
+function next(){
+  if(etapa===1){
+    if(!document.getElementById('fp').value){toast('Selecione a placa.','err');return}
+    if(!document.getElementById('fm').value.trim()){toast('Informe o motorista.','err');return}
+    if(!document.getElementById('fd').value){toast('Informe a data.','err');return}
+    showEtapa(2);
+  } else if(etapa===2){
+    showEtapa(3);cat=0;renderCat();
   }
 }
 
-function avancarEtapa() {
-  if(etapaAtual===1) {
-    const placa=document.getElementById('f-placa').value;
-    const mot=document.getElementById('f-motorista').value.trim();
-    const data=document.getElementById('f-data').value;
-    if(!placa||!mot||!data){toast('Preencha placa, motorista e data.','err');return;}
-    mostrarEtapa(2);
-  } else if(etapaAtual===2) {
-    mostrarEtapa(3);
-    catAtual=0; renderCat(0);
-  } else if(etapaAtual===3) {
-    proximaCat();
-  }
+function back(){
+  if(etapa===2)showEtapa(1);
+  else if(etapa===3){if(cat>0){cat--;renderCat()}else showEtapa(2)}
 }
 
-function voltarEtapa() {
-  if(etapaAtual===2) mostrarEtapa(1);
-  else if(etapaAtual===3) {
-    if(catAtual>0){catAtual--;renderCat(catAtual);}
-    else mostrarEtapa(2);
-  }
+function nextCat(){
+  const missing=CL[cat].it.filter(x=>!resp[x.n]).length;
+  if(missing>0){toast(missing+' item(ns) sem resposta.','err');return}
+  cat++;renderCat();
+  document.getElementById('scroll').scrollTo(0,0);
 }
 
-// ── Psicossocial ──
-function selecionarPsico(val) {
-  psicoSel = val;
-  const opts = ['bem','normal','indisposto'];
-  opts.forEach(o=>{
-    const el=document.getElementById('opt-'+o);
-    const chk=document.getElementById('chk-'+o);
-    el.className='psico-opt'+(o===val?' sel-'+o:'');
-    chk.textContent = o===val ? '✓' : '';
+// Psico
+function selPsico(v){
+  psico=v;
+  ['bem','normal','ruim'].forEach(k=>{
+    const val=k==='ruim'?'indisposto':k;
+    document.getElementById('pc-'+k).classList.toggle('on',v===val);
+    document.getElementById('pk-'+k).textContent=v===val?'✓':'';
   });
-  document.getElementById('alerta-indisposto').classList.toggle('show', val==='indisposto');
+  document.getElementById('alerta-ruim').classList.toggle('on',v==='indisposto');
 }
 
-// ── Checklist ──
-function renderCat(idx) {
-  const isUltima = idx === CHECKLIST.length - 1;
-  const cat = CHECKLIST[idx];
-  document.getElementById('cat-icon').textContent = cat.icon;
-  document.getElementById('cat-name').textContent = cat.cat;
-  document.getElementById('cat-count').textContent = `Categoria ${idx+1} de ${CHECKLIST.length} · ${cat.itens.length} itens`;
-  document.getElementById('prog-cat-label').textContent = `${cat.cat}`;
-
-  // Outros section só na última
-  const outrosSection = document.getElementById('outros-section');
-  outrosSection.style.display = isUltima ? 'block' : 'none';
-  if(isUltima) renderOutros();
-
-  // Items
-  const list = document.getElementById('items-list');
-  list.innerHTML = '';
-  cat.itens.forEach(item=>{
-    const resp = respostas[item.n] || null;
-    const card = document.createElement('div');
-    card.className = 'item-card' + (resp==='OK'?' ok':resp==='FALHA'?' falha':'');
-    card.id = 'ic_'+item.n;
-    card.innerHTML = `
-      <div class="item-card-main">
-        <div class="item-num">${item.n}</div>
-        <div class="item-text">${item.desc}</div>
-      </div>
-      <div class="item-btns">
-        <button class="ibtn${resp==='OK'?' sel-ok':''}" onclick="marcarItem(${item.n},'OK')">✓ OK</button>
-        <button class="ibtn${resp==='FALHA'?' sel-falha':''}" onclick="marcarItem(${item.n},'FALHA')">✗ Falha</button>
-      </div>
-      <div class="item-obs${resp==='FALHA'?' show':''}" id="obs_${item.n}">
-        <input type="text" placeholder="Descreva a falha..." value="${observacoes[item.n]||''}"
-          oninput="observacoes[${item.n}]=this.value">
-      </div>
-    `;
-    list.appendChild(card);
+// Checklist
+function renderCat(){
+  const c=CL[cat];
+  document.getElementById('ci').textContent=c.i;
+  document.getElementById('cn').textContent=c.c;
+  document.getElementById('cc').textContent='Categoria '+(cat+1)+' de '+CL.length+' · '+c.it.length+' itens';
+  const isLast=cat===CL.length-1;
+  document.getElementById('outros-s').style.display=isLast?'block':'none';
+  if(isLast)renderOutros();
+  const list=document.getElementById('ilist');
+  list.innerHTML='';
+  c.it.forEach(item=>{
+    const r=resp[item.n]||null;
+    const div=document.createElement('div');
+    div.className='icard'+(r==='OK'?' ok':r==='FALHA'?' falha':'');
+    div.id='ic'+item.n;
+    div.innerHTML=`<div class="icard-top">
+      <div class="inum">${item.n}</div>
+      <div class="itxt">${item.t}</div>
+    </div>
+    <div class="ibtns">
+      <button class="ibtn${r==='OK'?' ok':''}" onclick="mark(${item.n},'OK')">✓ OK</button>
+      <button class="ibtn${r==='FALHA'?' falha':''}" onclick="mark(${item.n},'FALHA')">✗ Falha</button>
+    </div>
+    <div class="iobs${r==='FALHA'?' on':''}" id="io${item.n}">
+      <input type="text" placeholder="Descreva a falha..." value="${obs[item.n]||''}" oninput="obs[${item.n}]=this.value">
+    </div>`;
+    list.appendChild(div);
   });
-
-  // Botões nav
-  const prev = document.getElementById('btn-prev');
-  const next = document.getElementById('btn-next');
-  prev.style.display = (idx===0 && etapaAtual===3) ? 'block' : 'block';
-  atualizarBtnChecklist();
-  atualizarProgresso();
+  updProg();updBtn();
 }
 
-function renderOutros() {
-  const wrap = document.getElementById('outros-card');
-  wrap.innerHTML = '';
+function renderOutros(){
+  const w=document.getElementById('outros-w');w.innerHTML='';
   for(let i=1;i<=4;i++){
-    const row = document.createElement('div');
-    row.className='outro-row';
-    row.innerHTML=`
-      <div class="outro-num">${44+i}</div>
-      <input type="text" class="outro-input" id="outro_desc_${i}" placeholder="Item não listado..." value="">
-      <div class="outro-tog">
-        <input type="radio" name="outro_${i}" id="ot_${i}_ok" value="OK" checked>
-        <label for="ot_${i}_ok">OK</label>
-        <input type="radio" name="outro_${i}" id="ot_${i}_f" value="FALHA">
-        <label for="ot_${i}_f">Falha</label>
-      </div>
-    `;
-    wrap.appendChild(row);
+    const row=document.createElement('div');row.className='outros-row';
+    row.innerHTML=`<div class="on-num">${44+i}</div>
+    <input type="text" class="on-input" id="od${i}" placeholder="Item não listado...">
+    <div class="on-tog">
+      <input type="radio" name="o${i}" id="oo${i}" value="OK" checked>
+      <label for="oo${i}">OK</label>
+      <input type="radio" name="o${i}" id="of${i}" value="FALHA">
+      <label for="of${i}">Falha</label>
+    </div>`;
+    w.appendChild(row);
   }
 }
 
-function marcarItem(n, val) {
-  respostas[n] = val;
-  const card = document.getElementById('ic_'+n);
-  card.className = 'item-card ' + (val==='OK'?'ok':'falha');
-  const btns = card.querySelectorAll('.ibtn');
-  btns[0].className = 'ibtn' + (val==='OK'?' sel-ok':'');
-  btns[1].className = 'ibtn' + (val==='FALHA'?' sel-falha':'');
-  const obs = document.getElementById('obs_'+n);
-  if(val==='FALHA'){
-    obs.classList.add('show');
-    obs.querySelector('input').focus();
-  } else {
-    obs.classList.remove('show');
-  }
-  atualizarProgresso();
-  atualizarBtnChecklist();
+function mark(n,v){
+  resp[n]=v;
+  const card=document.getElementById('ic'+n);
+  card.className='icard '+(v==='OK'?'ok':'falha');
+  card.querySelectorAll('.ibtn').forEach((b,i)=>{b.className='ibtn'+(i===0&&v==='OK'?' ok':i===1&&v==='FALHA'?' falha':'')});
+  const io=document.getElementById('io'+n);
+  io.classList.toggle('on',v==='FALHA');
+  if(v==='FALHA')io.querySelector('input').focus();
+  updProg();updBtn();
 }
 
-function atualizarProgresso() {
-  const respondidos = Object.keys(respostas).length;
-  const falhas = Object.values(respostas).filter(v=>v==='FALHA').length;
-  const pct = Math.round(respondidos/TOTAL*100);
-  document.getElementById('prog-bar').style.width = pct+'%';
-  document.getElementById('prog-txt').textContent = respondidos+' de '+TOTAL+' itens';
-  const pill = document.getElementById('falha-pill');
-  pill.textContent = falhas+' falha'+(falhas!==1?'s':'');
-  pill.classList.toggle('on', falhas>0);
+function updProg(){
+  const done=Object.keys(resp).length;
+  const f=Object.values(resp).filter(v=>v==='FALHA').length;
+  const pct=Math.round(done/TOTAL*100);
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('ptxt').textContent=done+' de '+TOTAL+' itens';
+  const ft=document.getElementById('ftag');
+  ft.style.display=f>0?'block':'none';
+  ft.textContent=f+' falha'+(f!==1?'s':'');
 }
 
-function atualizarBtnChecklist() {
-  const btn = document.getElementById('btn-main');
-  const cat = CHECKLIST[catAtual];
-  const todosRespondidos = cat.itens.every(item=>respostas[item.n]);
-  const isUltima = catAtual === CHECKLIST.length-1;
-
-  if(isUltima) {
-    btn.textContent = '✓ Enviar Vistoria';
-    btn.onclick = enviar;
-    btn.style.background = 'var(--g)';
-  } else {
-    btn.textContent = 'Próxima categoria →';
-    btn.onclick = proximaCat;
-    btn.style.background = todosRespondidos ? 'var(--g)' : 'var(--gm)';
-  }
-  btn.disabled = false;
-}
-
-function proximaCat() {
-  const cat = CHECKLIST[catAtual];
-  const naoRespondidos = cat.itens.filter(item=>!respostas[item.n]).length;
-  if(naoRespondidos>0) {
-    toast(`${naoRespondidos} item(ns) sem resposta nesta categoria.`,'err');
-    return;
-  }
-  if(catAtual < CHECKLIST.length-1) {
-    catAtual++;
-    renderCat(catAtual);
-    document.getElementById('content').scrollTo(0,0);
-  }
-}
-
-function catAnterior() {
-  voltarEtapa();
-}
-
-// ── Enviar ──
-async function enviar() {
-  const placa=document.getElementById('f-placa').value;
-  const motorista=document.getElementById('f-motorista').value.trim();
-  const km=parseInt(document.getElementById('f-km').value)||null;
-  const data=document.getElementById('f-data').value;
-
-  // Coletar falhas
-  const falhas = [];
-  CHECKLIST.forEach(cat=>{
-    cat.itens.forEach(item=>{
-      if(respostas[item.n]==='FALHA') {
-        falhas.push({
-          item_numero:item.n, categoria:cat.cat,
-          descricao:item.desc,
-          observacao:observacoes[item.n]||'',
-          status_manut:'PENDENTE'
-        });
-      }
-    });
-  });
-  // Outros
+// Enviar
+async function enviar(){
+  const missing=CL[cat].it.filter(x=>!resp[x.n]).length;
+  if(missing>0){toast(missing+' item(ns) sem resposta.','err');return}
+  const placa=document.getElementById('fp').value;
+  const mot=document.getElementById('fm').value.trim();
+  const km=parseInt(document.getElementById('fk').value)||null;
+  const data=document.getElementById('fd').value;
+  const falhas=[];
+  CL.forEach(c=>c.it.forEach(x=>{
+    if(resp[x.n]==='FALHA')falhas.push({item_numero:x.n,categoria:c.c,descricao:x.t,observacao:obs[x.n]||'',status_manut:'PENDENTE'});
+  }));
   for(let i=1;i<=4;i++){
-    const desc=document.getElementById('outro_desc_'+i)?.value.trim()||'';
-    const r=document.querySelector(`input[name="outro_${i}"]:checked`);
-    if(r?.value==='FALHA'&&desc){
-      falhas.push({item_numero:44+i,categoria:'Outros',descricao:desc,
-        observacao:'',status_manut:'PENDENTE'});
-    }
+    const d=document.getElementById('od'+i)?.value.trim()||'';
+    const r=document.querySelector(`input[name="o${i}"]:checked`);
+    if(r?.value==='FALHA'&&d)falhas.push({item_numero:44+i,categoria:'Outros',descricao:d,observacao:'',status_manut:'PENDENTE'});
   }
-
-  const btn=document.getElementById('btn-main');
-  btn.disabled=true; btn.textContent='Enviando...';
-
-  try {
-    const [vistoria]=await sb('vistorias',{
-      method:'POST',
-      body:{placa,motorista,data_vistoria:data,km,
-            total_falhas:falhas.length,estado_psicossocial:psicoSel}
-    });
-    for(const f of falhas){
-      await sb('rpc/upsert_falha',{
-        method:'POST',
-        body:{p_placa:placa,p_vistoria_id:vistoria.id,p_data:data,
-              p_item_numero:f.item_numero,p_categoria:f.categoria,
-              p_descricao:f.descricao,p_observacao:f.observacao||''}
-      });
-    }
-    // Mostrar sucesso
-    document.getElementById('etapa3').classList.remove('on');
-    document.getElementById('bottom-bar').style.display='none';
-    const sf=document.getElementById('sucesso-falhas');
-    if(falhas.length>0){
-      sf.textContent=falhas.length+' falha(s) registrada(s) no painel de manutenção.';
-      sf.classList.add('show');
-    }
-    document.getElementById('sucesso').classList.add('on');
-    document.getElementById('content').scrollTo(0,0);
-  } catch(e){
-    toast('Erro: '+String(e.message).substring(0,60),'err');
-    btn.disabled=false; btn.textContent='✓ Enviar Vistoria';
-  }
-}
-
-function resetForm(){
-  document.getElementById('sucesso').classList.remove('on');
-  document.getElementById('sucesso-falhas').classList.remove('show');
-  document.getElementById('bottom-bar').style.display='flex';
-  document.getElementById('f-motorista').value='';
-  document.getElementById('f-km').value='';
-  document.getElementById('f-placa').value='';
-  document.getElementById('f-data').value=new Date().toISOString().split('T')[0];
-  respostas={}; observacoes={}; catAtual=0; psicoSel='bem';
-  selecionarPsico('bem');
-  mostrarEtapa(1);
-}
-
-// ── Admin ──
-let allFalhas=[];
-const psicoEmoji={bem:'😊',normal:'😐',indisposto:'😴'};
-
-async function carregarAdmin(){
-  document.getElementById('falha-cards').innerHTML='<div class="loading-state"><div class="spin">⏳</div><p>Carregando...</p></div>';
-  document.getElementById('tbl-wrap').innerHTML='<div class="loading-state"><div class="spin">⏳</div><p>Carregando...</p></div>';
+  const bm=document.getElementById('bm');
+  bm.disabled=true;bm.textContent='Enviando...';
   try{
-    const data=await sb('itens_vistoria?select=*,vistorias(placa,motorista,data_vistoria,km,estado_psicossocial)&order=criado_em.desc');
-    allFalhas=data.map(r=>({
-      id:r.id,
-      data:r.primeira_data||r.vistorias?.data_vistoria||'',
-      ultima_data:r.ultima_data||'',
-      placa:r.vistorias?.placa||'',
-      motorista:r.vistorias?.motorista||'',
-      km:r.vistorias?.km||'',
-      psico:r.vistorias?.estado_psicossocial||'bem',
-      categoria:r.categoria,
-      num:r.item_numero,
-      descricao:r.descricao,
-      observacao:r.observacao||'',
-      status:r.status_manut,
-      ocorrencias:r.ocorrencias||1,
-    }));
-    renderResumo();
-    renderPlacaBtns();
-    popularFiltrosAdmin();
-    filtrar();
-  }catch(e){
-    document.getElementById('falha-cards').innerHTML='<div class="empty-state"><div class="ico">❌</div><p>Erro: '+e.message+'</p></div>';
-  }
+    const [vis]=await api('vistorias',{method:'POST',body:{placa,motorista:mot,data_vistoria:data,km,total_falhas:falhas.length,estado_psicossocial:psico}});
+    for(const f of falhas){
+      await api('rpc/upsert_falha',{method:'POST',body:{p_placa:placa,p_vistoria_id:vis.id,p_data:data,p_item_numero:f.item_numero,p_categoria:f.categoria,p_descricao:f.descricao,p_observacao:f.observacao||''}});
+    }
+    document.getElementById('s3').classList.remove('on');
+    document.getElementById('bar').style.display='none';
+    const sf=document.getElementById('sf');
+    if(falhas.length>0){sf.textContent=falhas.length+' falha(s) registrada(s) no painel.';sf.classList.add('on')}
+    document.getElementById('sucesso').classList.add('on');
+    document.getElementById('scroll').scrollTo(0,0);
+  }catch(e){toast('Erro: '+String(e.message).substring(0,60),'err');bm.disabled=false;updBtn()}
+}
+
+function novo(){
+  document.getElementById('sucesso').classList.remove('on');
+  document.getElementById('sf').classList.remove('on');
+  document.getElementById('bar').style.display='flex';
+  document.getElementById('fm').value='';
+  document.getElementById('fk').value='';
+  document.getElementById('fp').value='';
+  document.getElementById('fd').value=new Date().toISOString().split('T')[0];
+  resp={};obs={};cat=0;psico='bem';selPsico('bem');showEtapa(1);
+}
+
+// Admin
+let allF=[];
+const PE={bem:'😊',normal:'😐',indisposto:'😴'};
+
+async function loadAdmin(){
+  document.getElementById('fcards').innerHTML='<div class="empty"><div class="ei">⏳</div><p>Carregando...</p></div>';
+  try{
+    const d=await api('itens_vistoria?select=*,vistorias(placa,motorista,data_vistoria,km,estado_psicossocial)&order=criado_em.desc');
+    allF=d.map(r=>({id:r.id,data:r.primeira_data||r.vistorias?.data_vistoria||'',placa:r.vistorias?.placa||'',motorista:r.vistorias?.motorista||'',km:r.vistorias?.km||'',psico:r.vistorias?.estado_psicossocial||'bem',categoria:r.categoria,num:r.item_numero,desc:r.descricao,obs:r.observacao||'',status:r.status_manut,oc:r.ocorrencias||1}));
+    renderResumo();renderPbtns();populateCats();filtrar();
+  }catch(e){document.getElementById('fcards').innerHTML='<div class="empty"><div class="ei">❌</div><p>'+e.message+'</p></div>'}
 }
 
 function renderResumo(){
-  const grid=document.getElementById('resumo-grid');
-  grid.innerHTML='';
+  const g=document.getElementById('rgrid');g.innerHTML='';
   FROTA.forEach(v=>{
-    const fv=allFalhas.filter(f=>f.placa===v.placa);
+    const fv=allF.filter(f=>f.placa===v.p);
     const p=fv.filter(f=>f.status==='PENDENTE').length;
     const a=fv.filter(f=>f.status==='EM_ANDAMENTO').length;
     const r=fv.filter(f=>f.status==='RESOLVIDO').length;
-    grid.innerHTML+=`<div class="resumo-card" onclick="filtrarPlaca('${v.placa}')">
-      <div class="resumo-placa">${v.placa}</div>
-      <div class="resumo-desc">${v.descricao}</div>
-      <div class="resumo-stats">
-        <div class="rstat p"><span class="rn">${p}</span>Pendente</div>
-        <div class="rstat a"><span class="rn">${a}</span>Andamento</div>
-        <div class="rstat r"><span class="rn">${r}</span>Resolvido</div>
-      </div>
-    </div>`;
+    g.innerHTML+=`<div class="res-card" onclick="selPlaca('${v.p}')"><div class="res-placa">${v.p}</div><div class="res-desc">${v.d}</div><div class="res-stats"><div class="rst p"><span class="rn">${p}</span>Pend.</div><div class="rst a"><span class="rn">${a}</span>And.</div><div class="rst r"><span class="rn">${r}</span>OK</div></div></div>`;
   });
 }
 
-function renderPlacaBtns(){
-  const w=document.getElementById('placa-btns');
-  w.innerHTML=`<button class="fbtn todas on" data-p="" onclick="filtrarPlaca('')">Todas</button>`;
-  FROTA.forEach(v=>{w.innerHTML+=`<button class="fbtn" data-p="${v.placa}" onclick="filtrarPlaca('${v.placa}')">${v.placa}</button>`;});
+function renderPbtns(){
+  const w=document.getElementById('pbtns');
+  w.innerHTML='<button class="fbtn todas on" data-p="" onclick="selPlaca('')">Todas</button>';
+  FROTA.forEach(v=>{w.innerHTML+=`<button class="fbtn" data-p="${v.p}" onclick="selPlaca('${v.p}')">${v.p}</button>`});
 }
 
-function filtrarPlaca(p){
-  document.querySelectorAll('#placa-btns .fbtn').forEach(b=>b.classList.toggle('on',b.dataset.p===p||(p===''&&b.classList.contains('todas'))));
-  document.getElementById('placa-btns').dataset.sel=p;
-  filtrar();
+function selPlaca(p){
+  document.querySelectorAll('#pbtns .fbtn').forEach(b=>b.classList.toggle('on',b.dataset.p===p||(p===''&&b.classList.contains('todas'))));
+  document.getElementById('pbtns').dataset.sel=p;filtrar();
 }
 
-function popularFiltrosAdmin(){
-  const fc=document.getElementById('f-cat-admin');
+function populateCats(){
+  const fc=document.getElementById('fcat');
   fc.innerHTML='<option value="">Todas cats.</option>';
-  [...new Set(allFalhas.map(f=>f.categoria))].forEach(c=>{fc.innerHTML+=`<option value="${c}">${c}</option>`;});
+  [...new Set(allF.map(f=>f.categoria))].forEach(c=>{fc.innerHTML+=`<option value="${c}">${c}</option>`});
 }
 
 function filtrar(){
-  const fp=document.getElementById('placa-btns').dataset.sel||'';
-  const fs=document.getElementById('f-status').value;
-  const fc=document.getElementById('f-cat-admin').value;
-  const fpsico=document.getElementById('f-psico-admin').value;
-  let rows=allFalhas;
-  if(fp) rows=rows.filter(r=>r.placa===fp);
-  if(fs) rows=rows.filter(r=>r.status===fs);
-  if(fc) rows=rows.filter(r=>r.categoria===fc);
-  if(fpsico==='indisposto') rows=rows.filter(r=>r.psico==='indisposto');
-  renderFalhaCards(rows);
-  renderFalhaTbl(rows);
+  const fp=document.getElementById('pbtns').dataset.sel||'';
+  const fs=document.getElementById('fst').value;
+  const fc=document.getElementById('fcat').value;
+  const fpsico=document.getElementById('fps').value;
+  let rows=allF;
+  if(fp)rows=rows.filter(r=>r.placa===fp);
+  if(fs)rows=rows.filter(r=>r.status===fs);
+  if(fc)rows=rows.filter(r=>r.categoria===fc);
+  if(fpsico==='indisposto')rows=rows.filter(r=>r.psico==='indisposto');
+  renderCards(rows);
 }
 
-function renderFalhaCards(rows){
-  const wrap=document.getElementById('falha-cards');
-  if(rows.length===0){wrap.innerHTML='<div class="empty-state"><div class="ico">🎉</div><p>Nenhuma falha encontrada.</p></div>';return;}
-  wrap.innerHTML=rows.map(r=>{
+function renderCards(rows){
+  const w=document.getElementById('fcards');
+  if(!rows.length){w.innerHTML='<div class="empty"><div class="ei">🎉</div><p>Nenhuma falha encontrada.</p></div>';return}
+  w.innerHTML=rows.map(r=>{
     const bc=r.status==='PENDENTE'?'p':r.status==='EM_ANDAMENTO'?'a':'r';
     const bl=r.status==='PENDENTE'?'🔴 Pendente':r.status==='EM_ANDAMENTO'?'🟡 Andamento':'🟢 Resolvido';
     const df=r.data?r.data.split('-').reverse().join('/'):'—';
-    const km=r.km?r.km.toLocaleString('pt-BR')+' km':'—';
+    const km=r.km?Number(r.km).toLocaleString('pt-BR')+' km':'—';
+    const reinc=r.oc>1?`<span class="fc-reinc">⚠️ ${r.oc}x</span>`:'';
     const alerta=r.psico==='indisposto'?'alerta':'';
-    const reinc=r.ocorrencias>1?`<span class="fc-reinc">⚠️ ${r.ocorrencias}x</span>`:'';
-    const psicoAlert=r.psico==='indisposto'?`<span class="fc-psico-alert show">😴 Motorista indisposto</span><br>`:'';
-    const obsHtml=r.observacao?`<div class="fc-obs show">⚠️ ${r.observacao}</div>`:'';
-    let acoes='';
-    if(r.status==='PENDENTE') acoes=`<button class="act to-a" onclick="mudar(${r.id},'EM_ANDAMENTO')">→ Andamento</button><button class="act to-r" onclick="mudar(${r.id},'RESOLVIDO')">✓ Resolvido</button>`;
-    else if(r.status==='EM_ANDAMENTO') acoes=`<button class="act to-r" onclick="mudar(${r.id},'RESOLVIDO')">✓ Resolvido</button><button class="act to-p" onclick="mudar(${r.id},'PENDENTE')">↩ Pendente</button>`;
-    else acoes=`<button class="act to-p" onclick="mudar(${r.id},'PENDENTE')">↩ Reabrir</button>`;
-    return `<div class="falha-card ${bc} ${alerta}" id="fc_${r.id}">
-      <div class="fc-top">
-        <div class="fc-meta"><span class="placa-tag">${r.placa}</span><span class="fc-dt">${df} · ${km}</span></div>
-        <span class="badge ${bc}">${bl}</span>
-      </div>
-      <div class="fc-body">
-        ${psicoAlert}
-        <div class="fc-desc">${r.num}. ${r.descricao}${reinc}</div>
-        ${obsHtml}
-        <div class="fc-info">👤 ${r.motorista} · 📂 ${r.categoria}</div>
-        <div class="fc-acts">${acoes}</div>
-      </div>
-    </div>`;
+    const pa=r.psico==='indisposto'?'<span class="fc-palert on">😴 Motorista indisposto</span><br>':'';
+    const obsH=r.obs?`<div class="fc-obs on">⚠️ ${r.obs}</div>`:'';
+    let ac='';
+    if(r.status==='PENDENTE')ac=`<button class="act a" onclick="mudar(${r.id},'EM_ANDAMENTO')">→ Andamento</button><button class="act r" onclick="mudar(${r.id},'RESOLVIDO')">✓ Resolvido</button>`;
+    else if(r.status==='EM_ANDAMENTO')ac=`<button class="act r" onclick="mudar(${r.id},'RESOLVIDO')">✓ Resolvido</button><button class="act p" onclick="mudar(${r.id},'PENDENTE')">↩ Pendente</button>`;
+    else ac=`<button class="act p" onclick="mudar(${r.id},'PENDENTE')">↩ Reabrir</button>`;
+    return `<div class="fcard ${bc} ${alerta}" id="fc${r.id}"><div class="fc-top"><div class="fc-meta"><span class="ptag">${r.placa}</span><span class="fdt">${df} · ${km}</span></div><span class="badge ${bc}">${bl}</span></div><div class="fc-body">${pa}<div class="fc-desc">${r.num}. ${r.desc}${reinc}</div>${obsH}<div class="fc-info">👤 ${r.motorista} · 📂 ${r.categoria}</div><div class="fc-acts">${ac}</div></div></div>`;
   }).join('');
 }
 
-function renderFalhaTbl(rows){
-  const wrap=document.getElementById('tbl-wrap');
-  if(rows.length===0){wrap.innerHTML='<div class="empty-state"><div class="ico">🎉</div><p>Nenhuma falha.</p></div>';return;}
-  wrap.innerHTML=`<table>
-    <thead><tr>
-      <th>Data</th><th>Placa</th><th>Motorista</th><th>Estado</th>
-      <th>Cat.</th><th>#</th><th>Item</th><th>Observação</th><th>Status</th><th>Ações</th>
-    </tr></thead>
-    <tbody>${rows.map(r=>{
-      const bc=r.status==='PENDENTE'?'p':r.status==='EM_ANDAMENTO'?'a':'r';
-      const bl=r.status==='PENDENTE'?'🔴 Pendente':r.status==='EM_ANDAMENTO'?'🟡 Andamento':'🟢 Resolvido';
-      const df=r.data?r.data.split('-').reverse().join('/'):'—';
-      const km=r.km?r.km.toLocaleString('pt-BR')+' km':'—';
-      const reinc=r.ocorrencias>1?`<span class="fc-reinc">⚠️ ${r.ocorrencias}x</span>`:'';
-      const alerta=r.psico==='indisposto'?'alerta':'';
-      let acoes='';
-      if(r.status==='PENDENTE') acoes=`<button class="act to-a" onclick="mudar(${r.id},'EM_ANDAMENTO')">→ Andamento</button> <button class="act to-r" onclick="mudar(${r.id},'RESOLVIDO')">✓</button>`;
-      else if(r.status==='EM_ANDAMENTO') acoes=`<button class="act to-r" onclick="mudar(${r.id},'RESOLVIDO')">✓ Resolvido</button>`;
-      else acoes=`<button class="act to-p" onclick="mudar(${r.id},'PENDENTE')">↩</button>`;
-      return `<tr id="tr_${r.id}" class="${alerta}">
-        <td>${df}<br><small style="color:var(--sub)">${km}</small></td>
-        <td><span class="placa-tag">${r.placa}</span></td>
-        <td>${r.motorista}</td>
-        <td style="text-align:center">${psicoEmoji[r.psico]||'😊'}</td>
-        <td><small style="color:var(--sub)">${r.categoria}</small></td>
-        <td style="text-align:center;font-weight:700;color:var(--sub)">${r.num}</td>
-        <td style="max-width:220px;line-height:1.4">${r.descricao}${reinc}</td>
-        <td style="color:var(--sub);max-width:140px">${r.observacao||'—'}</td>
-        <td><span class="badge ${bc}">${bl}</span></td>
-        <td><div style="display:flex;gap:5px">${acoes}</div></td>
-      </tr>`;
-    }).join('')}</tbody>
-  </table>`;
-}
-
-async function mudar(id, novo){
-  document.querySelectorAll(`#fc_${id} .act, #tr_${id} .act`).forEach(b=>b.disabled=true);
+async function mudar(id,novo){
+  document.querySelectorAll(`#fc${id} .act`).forEach(b=>b.disabled=true);
   try{
-    await sb(`itens_vistoria?id=eq.${id}`,{
-      method:'PATCH',
-      body:{status_manut:novo,...(novo==='RESOLVIDO'?{resolvido_em:new Date().toISOString()}:{})},
-      prefer:'return=minimal'
-    });
-    const idx=allFalhas.findIndex(f=>f.id===id);
-    if(idx!==-1) allFalhas[idx].status=novo;
-    renderResumo(); filtrar();
+    await api(`itens_vistoria?id=eq.${id}`,{method:'PATCH',body:{status_manut:novo,...(novo==='RESOLVIDO'?{resolvido_em:new Date().toISOString()}:{})},prefer:'return=minimal'});
+    const i=allF.findIndex(f=>f.id===id);if(i!==-1)allF[i].status=novo;
+    renderResumo();filtrar();
     toast(novo==='RESOLVIDO'?'✓ Resolvido':novo==='EM_ANDAMENTO'?'→ Em andamento':'↩ Reaberto','ok');
-  }catch(e){
-    toast('Erro: '+e.message,'err');
-    document.querySelectorAll(`#fc_${id} .act, #tr_${id} .act`).forEach(b=>b.disabled=false);
-  }
+  }catch(e){toast('Erro: '+e.message,'err');document.querySelectorAll(`#fc${id} .act`).forEach(b=>b.disabled=false)}
 }
 
-window.addEventListener('DOMContentLoaded',()=>{init();mostrarEtapa(1);});
-</script>
+// PWA
+let dp;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;document.getElementById('pwab').style.display='flex'});
+function installPWA(){if(!dp)return;dp.prompt();dp.userChoice.then(()=>{document.getElementById('pwab').style.display='none';dp=null})}
+window.addEventListener('appinstalled',()=>{document.getElementById('pwab').style.display='none'});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 
-<!-- Banner de instalação PWA -->
-<div id="pwa-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
-  background:#fff;border-top:1px solid #E8EAED;padding:14px 16px;
-  box-shadow:0 -4px 20px rgba(0,0,0,.12);max-width:480px;margin:0 auto;
-  align-items:center;gap:12px;">
-  <div style="width:44px;height:44px;background:#1B6B2F;border-radius:10px;
-    display:flex;align-items:center;justify-content:center;
-    font-family:Syne,sans-serif;font-weight:800;font-size:20px;color:#fff;flex-shrink:0">A</div>
-  <div style="flex:1">
-    <div style="font-family:Syne,sans-serif;font-size:13px;font-weight:800;color:#111827">Instalar AGA Check List</div>
-    <div style="font-size:11px;color:#6B7280;margin-top:1px">Adicionar à tela inicial como app</div>
-  </div>
-  <button onclick="instalarPWA()" style="padding:8px 16px;background:#1B6B2F;color:#fff;
-    border:none;border-radius:10px;font-family:Inter,sans-serif;font-size:12px;
-    font-weight:700;cursor:pointer;flex-shrink:0">Instalar</button>
-  <button onclick="document.getElementById('pwa-banner').style.display='none'" 
-    style="width:28px;height:28px;border:none;background:#F7F8FA;border-radius:50%;
-    font-size:14px;cursor:pointer;flex-shrink:0;color:#6B7280">✕</button>
-</div>
-<script>
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const banner = document.getElementById('pwa-banner');
-  if (banner) {
-    banner.style.display = 'flex';
-  }
-});
-
-function instalarPWA() {
-  const banner = document.getElementById('pwa-banner');
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(choice => {
-    if (choice.outcome === 'accepted') {
-      if (banner) banner.style.display = 'none';
-    }
-    deferredPrompt = null;
-  });
-}
-
-window.addEventListener('appinstalled', () => {
-  const banner = document.getElementById('pwa-banner');
-  if (banner) banner.style.display = 'none';
-  deferredPrompt = null;
-});
+// Init
+document.getElementById('fd').value=new Date().toISOString().split('T')[0];
+selPsico('bem');showEtapa(1);
 </script>
 </body>
 </html>
