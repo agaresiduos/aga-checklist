@@ -1,10 +1,10 @@
-const CACHE = 'aga-checklist-v1';
+const CACHE = 'aga-checklist-v2';
 const ASSETS = [
   '/aga-checklist/',
   '/aga-checklist/index.html',
   '/aga-checklist/manifest.json',
-  '/aga-checklist/icons/icon-192.png',
-  '/aga-checklist/icons/icon-512.png',
+  '/aga-checklist/icon-192.png',
+  '/aga-checklist/icon-512.png',
 ];
 
 self.addEventListener('install', e => {
@@ -22,9 +22,7 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Nunca cacheia chamadas ao Supabase
   if (e.request.url.includes('supabase.co')) return;
-
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
