@@ -59,8 +59,8 @@ h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:6px}
 .pcard.on-ruim{border-color:var(--r);background:var(--rc)}
 .pem{font-size:40px;line-height:1;flex-shrink:0}
 .ptx{flex:1}
-.ptx b{display:block;font-size:15px;font-weight:700;margin-bottom:3px}
-.ptx span{font-size:12px;color:var(--sub);line-height:1.4}
+.ptx b{display:block;font-size:15px;font-weight:700;margin-bottom:3px;text-decoration:none}
+.ptx span{font-size:12px;color:var(--sub);line-height:1.4;text-decoration:none!important;font-style:normal}
 .pcard.on-bem .ptx b{color:var(--g)}
 .pcard.on-normal .ptx b{color:var(--y)}
 .pcard.on-ruim .ptx b{color:var(--r)}
@@ -215,7 +215,7 @@ h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:6px}
 <div id="app">
   <header>
     <div class="logo">
-      <div class="logo-i">A</div>
+      <img id="logo-img" src="logo.png" alt="AGA" onerror="this.style.display='none';document.getElementById('logo-fb').style.display='flex'" style="width:30px;height:30px;border-radius:8px;object-fit:contain;background:#fff;padding:2px"><div id="logo-fb" class="logo-i" style="display:none">A</div>
       AGA Resíduos
     </div>
     <div class="nav">
