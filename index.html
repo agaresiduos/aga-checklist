@@ -215,8 +215,7 @@ h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:6px}
 <div id="app">
   <header>
     <div class="logo">
-      <img id="logo-img" src="logo.png" alt="AGA" onerror="this.style.display='none';document.getElementById('logo-fb').style.display='flex'" style="width:30px;height:30px;border-radius:8px;object-fit:contain;background:#fff;padding:2px"><div id="logo-fb" class="logo-i" style="display:none">A</div>
-      AGA Resíduos
+      <img id="logo-img" src="logo.png" alt="AGA" onerror="this.style.display='none';document.getElementById('logo-fb').style.display='flex'" style="height:36px;max-width:160px;border-radius:6px;object-fit:contain"><div id="logo-fb" class="logo-i" style="display:none">A</div>
     </div>
     <div class="nav">
       <button class="ntab on" id="tab-v" onclick="goView('v')">Vistoria</button>
@@ -783,7 +782,19 @@ var dp;
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;document.getElementById('pwab').style.display='flex';});
 function installPWA(){if(!dp)return;dp.prompt();dp.userChoice.then(function(){document.getElementById('pwab').style.display='none';dp=null;});}
 window.addEventListener('appinstalled',function(){document.getElementById('pwab').style.display='none';});
-if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+if('serviceWorker'in navigator){
+  navigator.serviceWorker.register('sw.js?v=1cded00d').then(function(reg){
+    reg.onupdatefound=function(){
+      var w=reg.installing;
+      w.onstatechange=function(){
+        if(w.state==='installed'&&navigator.serviceWorker.controller){
+          // Nova versão disponível — recarrega automaticamente
+          window.location.reload();
+        }
+      };
+    };
+  });
+}
 
 // INIT
 document.getElementById('fd').value=new Date().toISOString().split('T')[0];
