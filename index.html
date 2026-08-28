@@ -2,6 +2,10 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="version" content="1787926817">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -782,16 +786,13 @@ var dp;
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;document.getElementById('pwab').style.display='flex';});
 function installPWA(){if(!dp)return;dp.prompt();dp.userChoice.then(function(){document.getElementById('pwab').style.display='none';dp=null;});}
 window.addEventListener('appinstalled',function(){document.getElementById('pwab').style.display='none';});
-if('serviceWorker'in navigator){
-  navigator.serviceWorker.register('sw.js?v=1cded00d').then(function(reg){
-    reg.onupdatefound=function(){
-      var w=reg.installing;
-      w.onstatechange=function(){
-        if(w.state==='installed'&&navigator.serviceWorker.controller){
-          // Nova versão disponível — recarrega automaticamente
-          window.location.reload();
-        }
-      };
+// Desregistra SW antigo e recarrega se necessário
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+  navigator.serviceWorker.addEventListener('message', e => {
+    if(e.data && e.data.action === 'reload') window.location.reload();
+  });
+};
     };
   });
 }
